@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UV.nu – UV Index i Sverige</title>
+<style>
+  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
+  header { display:flex; justify-content: space-between; align-items:center; padding: 1rem; background:#0066cc; color:white; }
+  header .lang-toggle { cursor:pointer; font-size:1.2rem; }
+  main { max-width:600px; margin:2rem auto; padding:1rem; background:white; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+  h1 { font-size:1.5rem; text-align:center; }
+  .search-container { position:relative; margin:1rem 0; }
+  input[type="text"] { width:100%; padding:0.8rem; font-size:1rem; border-radius:4px; border:1px solid #ccc; }
+  .suggestions { position:absolute; top:100%; left:0; right:0; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; }
+  .suggestion-item { padding:0.5rem; cursor:pointer; }
+  .suggestion-item:hover { background:#eee; }
+  .uv-display { text-align:center; margin:2rem 0; padding:1rem; border-radius:8px; color:white; font-weight:bold; font-size:1.2rem; }
+  .uv-low { background:#4caf50; }
+  .uv-moderate { background:#ffeb3b; color:#333; }
+  .uv-high { background:#ff9800; }
+  .uv-veryhigh { background:#f44336; }
+  .uv-extreme { background:#9c27b0; }
+  .recommendations { margin-top:1rem; line-height:1.5; }
+  footer { text-align:center; font-size:0.8rem; padding:1rem; margin-top:2rem; color:#555; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>UV.nu</div>
+  <div class="lang-toggle" onclick="toggleLang()">🇸🇪</div>
+</header>
+
+<main>
+  <h1 id="title">UV-index i <span id="selected-city">Välj stad</span></h1>
+  
+  <div class="search-container">
+    <input type="text" id="city-input" placeholder="Skriv stad eller välj">
+    <div class="suggestions" id="suggestions" style="display:none;"></div>
+  </div>
+
+  <div id="uv-info">
+    <div class="uv-display" id="uv-display" style="display:none;"></div>
+    <div class="recommendations" id="recommendations"></div>
+  </div>
+</main>
+
+<footer>
+  <div>© 2025 UV.nu | <a href="#">Mer info om UV-strålning</a></div>
+  <div style="margin-top:1rem;">Här kan en diskret annons visas</div>
+</footer>
+
+<script>
+// ------------------- LANGUAGE -------------------
+let lang = 'sv'; // default Swedish
+const texts = {
+  sv: {
+    low: "Låg risk: Ingen särskild solskyddsåtgärd behövs under korta stunder ute.",
+    moderate: "Måttlig risk: Använd solskydd, hatt och skugga under soliga timmar.",
+    high: "Hög risk: Solskydd SPF 30+, hatt, skugga mellan 10–16.",
+    veryhigh: "Mycket hög risk: Extra solskydd, minimera direkt exponering mitt på dagen.",
+    extreme: "Extrem risk: Undvik solen mitt på dagen, SPF 50+, kläder, hatt, skugga.",
+  },
+  en: {
+    low: "Low risk: No special sun protection needed for short periods outside.",
+    moderate: "Moderate risk: Use sunscreen, hat, and seek shade during sunny hours.",
+    high: "High risk: SPF 30+ sunscreen, hat, shade between 10AM–4PM.",
+    veryhigh: "Very high risk: Extra protection, minimize direct exposure at midday.",
+    extreme: "Extreme risk: Avoid sun at midday, SPF 50+, clothing, hat, shade.",
+  }
+};
+
+function toggleLang() {
+  lang = lang === 'sv' ? 'en' : 'sv';
+  document.querySelector('.lang-toggle').textContent = lang === 'sv' ? '🇸🇪' : '🇬🇧';
+  updateRecommendations();
+}
+
+// ------------------- CITIES -------------------
+const defaultCities = ["Stockholm", "Göteborg", "Malmö"];
+let allCities = []; // will fetch dynamically via OpenStreetMap if needed
+const cityInput = document.getElementById("city-input");
+const suggestionsDiv = document.getElementById("suggestions");
+const selectedCitySpan = document.getElementById("selected-city");
+
+cityInput.addEventListener("focus", () => {
+  showSuggestions(defaultCities);
+});
+
+cityInput.addEventListener("input", () => {
+  const query = cityInput.value.toLowerCase();
+  if (!query) return showSuggestions(defaultCities);
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=SE&q=${encodeURIComponent(query)}&limit=10`)
+    .then(res => res.json())
+    .then(data => {
+      const names = data.map(c => c.display_name.split(",")[0]);
+      showSuggestions(names);
+    });
+});
+
+function showSuggestions(list) {
+  suggestionsDiv.innerHTML = "";
+  list.forEach(city => {
+    const div = document.createElement("div");
+    div.classList.add("suggestion-item");
+    div.textContent = city;
+    div.addEventListener("click", () => selectCity(city));
+    suggestionsDiv.appendChild(div);
+  });
+  suggestionsDiv.style.display = "block";
+}
+
+function selectCity(city) {
+  selectedCitySpan.textContent = city;
+  cityInput.value = "";
+  suggestionsDiv.style.display = "none";
+  fetchUV(city);
+}
+
+// ------------------- UV FETCH -------------------
+function fetchUV(city) {
+  // Use MET Norway UV API
+  // First, get coordinates via OpenStreetMap
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=SE&q=${encodeURIComponent(city)}&limit=1`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data[0]) return alert("Kunde inte hitta staden");
+      const lat = data[0].lat;
+      const lon = data[0].lon;
+      // MET Norway UV API
+      fetch(`https://api.met.no/weatherapi/uv/2.0/forecast?lat=${lat}&lon=${lon}`, {
+        headers: { "User-Agent": "UV.nu example" }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(!data?.properties?.timeseries?.length) return alert("Ingen UV-data tillgänglig");
+        const uv = data.properties.timeseries[0].data.instant.details.uv_index_clear_sky;
+        displayUV(uv);
+      });
+    });
+}
+
+const uvDisplay = document.getElementById("uv-display");
+const recommendationsDiv = document.getElementById("recommendations");
+
+function displayUV(uv) {
+  let level = "", colorClass="";
+  if (uv <= 2) { level = "low"; colorClass="uv-low"; }
+  else if (uv <= 5) { level="moderate"; colorClass="uv-moderate"; }
+  else if (uv <= 7) { level="high"; colorClass="uv-high"; }
+  else if (uv <= 10) { level="veryhigh"; colorClass="uv-veryhigh"; }
+  else { level="extreme"; colorClass="uv-extreme"; }
+
+  uvDisplay.textContent = `UV-index: ${uv} (${level.toUpperCase()})`;
+  uvDisplay.className = `uv-display ${colorClass}`;
+  updateRecommendations(level);
+  uvDisplay.style.display="block";
+}
+
+function updateRecommendations(level=null) {
+  if(!level) {
+    recommendationsDiv.innerHTML = "";
+    return;
+  }
+  recommendationsDiv.textContent = texts[lang][level];
+}
+
+// ------------------- INIT -------------------
+document.addEventListener("click", (e) => {
+  if (!suggestionsDiv.contains(e.target) && e.target !== cityInput) {
+    suggestionsDiv.style.display = "none";
+  }
+});
+</script>
+
+</body>
+</html>

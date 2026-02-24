@@ -1,197 +1,138 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UV.nu – Stockholm</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UV.nu – Stockholm</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7DA7D9">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #cce7ff, #f0e6ff);
+    color: #1f2d3d;
+    padding: 20px;
+  }
 
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#7DA7D9" />
+  .card {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+  }
 
-  <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f4f7fb;
-      color: #1f2d3d;
-      padding: 20px;
-    }
+  h1 { font-size: 28px; margin: 0 0 10px 0; }
+  h2 { font-size: 20px; margin-bottom: 10px; }
 
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-    }
+  .current-weather {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-    h1 {
-      margin: 0 0 5px 0;
-      font-size: 24px;
-    }
+  .temperature { font-size: 64px; font-weight: 800; }
+  .precipitation { font-size: 24px; }
 
-    .uv-value {
-      font-size: 64px;
-      font-weight: bold;
-    }
+  .uv-timeline { display: flex; gap: 6px; overflow-x: auto; margin-top: 15px; }
+  .uv-hour {
+    flex: 0 0 50px;
+    text-align: center;
+    padding: 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    background: #eef3f8;
+    transition: all 0.3s ease;
+  }
 
-    .uv-label {
-      font-size: 18px;
-      opacity: 0.7;
-    }
+  .current-hour { border: 2px solid #5c88c4; background: rgba(93,136,196,0.3); }
 
-    .uv-timeline {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      margin-top: 15px;
-    }
+  .recommendations { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .rec-badge { background: #e9f2fb; padding: 8px 12px; border-radius: 999px; font-size: 14px; }
 
-    .uv-hour {
-      flex: 0 0 50px;
-      text-align: center;
-      padding: 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      background: #eef3f8;
-    }
+  .forecast { display: flex; gap: 15px; overflow-x: auto; margin-top: 15px; }
+  .forecast-day { background: rgba(255,255,255,0.6); backdrop-filter: blur(8px); border-radius: 16px; padding: 10px; min-width: 80px; text-align: center; }
 
-    .current-hour {
-      border: 2px solid #5c88c4;
-      background: #dde8f6;
-    }
+  input { padding: 8px; border-radius: 10px; border: 1px solid #ccc; width: 100%; margin-top: 10px; }
 
-    .recommendations {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    .rec-badge {
-      background: #e9f2fb;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 14px;
-    }
-
-    input {
-      padding: 8px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    @media (min-width: 768px) {
-      body {
-        max-width: 600px;
-        margin: auto;
-      }
-    }
-  </style>
+  @media (min-width: 768px) {
+    body { max-width: 700px; margin: auto; }
+  }
+</style>
 </head>
-
 <body>
-
-  <div class="card">
-    <h1 id="cityName">Stockholm</h1>
-    <div class="uv-value" id="uvValue">–</div>
-    <div class="uv-label" id="uvLabel">UV-index nu</div>
-
-    <div class="uv-timeline" id="uvTimeline"></div>
+<div class="card">
+  <h1 id="cityName">Stockholm</h1>
+  <div class="current-weather">
+    <div class="temperature" id="tempValue">–°C</div>
+    <div class="precipitation" id="precipValue">–%</div>
   </div>
 
-  <div class="card">
-    <h2>Rekommendationer</h2>
-    <div class="recommendations">
-      <div class="rec-badge">SPF 30+</div>
-      <div class="rec-badge">Hatt</div>
-      <div class="rec-badge">Solglasögon</div>
-    </div>
-  </div>
+  <div class="uv-timeline" id="uvTimeline"></div>
+</div>
 
-  <div class="card">
-    <h2>Byt stad</h2>
-    <input type="text" id="cityInput" placeholder="Skriv stad..." />
+<div class="card">
+  <h2>Rekommendationer</h2>
+  <div class="recommendations">
+    <div class="rec-badge">SPF 30+</div>
+    <div class="rec-badge">Hatt</div>
+    <div class="rec-badge">Solglasögon</div>
   </div>
+</div>
+
+<div class="card">
+  <h2>Byt stad</h2>
+  <input type="text" id="cityInput" placeholder="Skriv stad..." />
+</div>
 
 <script>
 const defaultCity = "Stockholm";
 
 async function fetchCoordinates(city) {
-  const res = await fetch(
-    `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`
-  );
+  const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`);
   const data = await res.json();
   return data.results?.[0];
 }
 
 async function fetchWeather(lat, lon) {
-  const res = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=uv_index&timezone=auto`
-  );
+  const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=uv_index&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=auto`);
   return res.json();
 }
 
-function uvLevelLabel(value) {
-  if (value <= 2) return "Låg";
-  if (value <= 5) return "Måttlig";
-  if (value <= 7) return "Hög";
-  if (value <= 10) return "Mycket hög";
-  return "Extrem";
-}
+function uvLevelLabel(value){ if(value<=2) return "Låg"; if(value<=5) return "Måttlig"; if(value<=7) return "Hög"; if(value<=10) return "Mycket hög"; return "Extrem"; }
+function uvColor(value){ if(value<=2) return "#A8D5BA"; if(value<=5) return "#F3E79B"; if(value<=7) return "#F7B267"; if(value<=10) return "#E76F51"; return "#9D4EDD"; }
 
-function uvColor(value) {
-  if (value <= 2) return "#A8D5BA";
-  if (value <= 5) return "#F3E79B";
-  if (value <= 7) return "#F7B267";
-  if (value <= 10) return "#E76F51";
-  return "#9D4EDD";
-}
-
-async function loadCity(city) {
+async function loadCity(city){
   const coords = await fetchCoordinates(city);
-  if (!coords) return;
-
+  if(!coords) return;
   document.getElementById("cityName").innerText = coords.name;
 
   const weather = await fetchWeather(coords.latitude, coords.longitude);
-
   const nowHour = new Date().getHours();
   const uvArray = weather.hourly.uv_index;
 
-  const currentUV = uvArray[nowHour];
-  document.getElementById("uvValue").innerText = currentUV.toFixed(1);
-  document.getElementById("uvLabel").innerText =
-    "UV-index nu – " + uvLevelLabel(currentUV);
+  document.getElementById("tempValue").innerText = weather.current_weather.temperature + '°C';
+  document.getElementById("precipValue").innerText = weather.daily.precipitation_probability_max[0] + '%';
 
   const timeline = document.getElementById("uvTimeline");
-  timeline.innerHTML = "";
-
-  for (let i = 0; i < 24; i++) {
-    const div = document.createElement("div");
-    div.className = "uv-hour";
-    if (i === nowHour) div.classList.add("current-hour");
-
-    div.style.background = uvColor(uvArray[i]) + "33";
-
-    div.innerHTML = `<div>${i}</div><strong>${uvArray[i]}</strong>`;
+  timeline.innerHTML = '';
+  for(let i=0;i<24;i++){
+    const div = document.createElement('div');
+    div.className = 'uv-hour';
+    if(i===nowHour) div.classList.add('current-hour');
+    div.style.background = uvColor(uvArray[i]) + '33';
+    div.innerHTML = `<div>${i}h</div><strong>${uvArray[i]}</strong>`;
     timeline.appendChild(div);
   }
 }
 
-document.getElementById("cityInput").addEventListener("change", (e) => {
-  loadCity(e.target.value);
-});
-
+document.getElementById('cityInput').addEventListener('change',(e)=>{ loadCity(e.target.value); });
 loadCity(defaultCity);
 
-// Register Service Worker
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
 </script>
-
 </body>
 </html>

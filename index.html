@@ -1,138 +1,132 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UV.nu – Stockholm</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#7DA7D9">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-  body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #cce7ff, #f0e6ff);
-    color: #1f2d3d;
-    padding: 20px;
-  }
-
-  .card {
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-  }
-
-  h1 { font-size: 28px; margin: 0 0 10px 0; }
-  h2 { font-size: 20px; margin-bottom: 10px; }
-
-  .current-weather {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .temperature { font-size: 64px; font-weight: 800; }
-  .precipitation { font-size: 24px; }
-
-  .uv-timeline { display: flex; gap: 6px; overflow-x: auto; margin-top: 15px; }
-  .uv-hour {
-    flex: 0 0 50px;
-    text-align: center;
-    padding: 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    background: #eef3f8;
-    transition: all 0.3s ease;
-  }
-
-  .current-hour { border: 2px solid #5c88c4; background: rgba(93,136,196,0.3); }
-
-  .recommendations { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-  .rec-badge { background: #e9f2fb; padding: 8px 12px; border-radius: 999px; font-size: 14px; }
-
-  .forecast { display: flex; gap: 15px; overflow-x: auto; margin-top: 15px; }
-  .forecast-day { background: rgba(255,255,255,0.6); backdrop-filter: blur(8px); border-radius: 16px; padding: 10px; min-width: 80px; text-align: center; }
-
-  input { padding: 8px; border-radius: 10px; border: 1px solid #ccc; width: 100%; margin-top: 10px; }
-
-  @media (min-width: 768px) {
-    body { max-width: 700px; margin: auto; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UV.nu</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .uv-low { background-color: #a3f7a3; }       /* Green */
+    .uv-moderate { background-color: #fff3a3; }  /* Yellow */
+    .uv-high { background-color: #ffb3a3; }      /* Red */
+  </style>
 </head>
-<body>
-<div class="card">
-  <h1 id="cityName">Stockholm</h1>
-  <div class="current-weather">
-    <div class="temperature" id="tempValue">–°C</div>
-    <div class="precipitation" id="precipValue">–%</div>
-  </div>
+<body class="bg-gray-50 font-sans">
 
-  <div class="uv-timeline" id="uvTimeline"></div>
-</div>
+  <!-- Header -->
+  <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">UV.nu</h1>
+    <nav>
+      <ul class="flex space-x-4">
+        <li><a href="#home" class="hover:underline">Hem</a></li>
+        <li><a href="#uv-index" class="hover:underline">UV-index</a></li>
+        <li><a href="#tips" class="hover:underline">Tips</a></li>
+        <li><a href="#kontakt" class="hover:underline">Kontakt</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<div class="card">
-  <h2>Rekommendationer</h2>
-  <div class="recommendations">
-    <div class="rec-badge">SPF 30+</div>
-    <div class="rec-badge">Hatt</div>
-    <div class="rec-badge">Solglasögon</div>
-  </div>
-</div>
+  <!-- Hero Section -->
+  <section id="home" class="bg-blue-100 p-8 text-center">
+    <h2 class="text-3xl font-bold mb-4">Håll koll på UV-strålningen!</h2>
+    <p class="mb-6">Få dagens UV-index och tips för solskydd direkt här.</p>
+    <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Se UV-index</button>
+  </section>
 
-<div class="card">
-  <h2>Byt stad</h2>
-  <input type="text" id="cityInput" placeholder="Skriv stad..." />
-</div>
+  <!-- UV & Weather Section -->
+  <section id="uv-index" class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6" id="cities">
+    <!-- Cards populated dynamically -->
+  </section>
 
-<script>
-const defaultCity = "Stockholm";
+  <!-- Tips Section -->
+  <section id="tips" class="bg-yellow-100 p-8">
+    <h2 class="text-2xl font-bold mb-4">Solskyddstips</h2>
+    <ul id="tips-list" class="list-disc pl-5 space-y-2">
+      <!-- Tips populated dynamically -->
+    </ul>
+  </section>
 
-async function fetchCoordinates(city) {
-  const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`);
-  const data = await res.json();
-  return data.results?.[0];
-}
+  <!-- Contact Section -->
+  <section id="kontakt" class="p-8 text-center">
+    <h2 class="text-2xl font-bold mb-4">Kontakt</h2>
+    <p>Frågor? Maila oss på <a href="mailto:info@uv.nu" class="text-blue-600 hover:underline">info@uv.nu</a></p>
+  </section>
 
-async function fetchWeather(lat, lon) {
-  const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=uv_index&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=auto`);
-  return res.json();
-}
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white p-4 text-center">
+    <p>&copy; 2026 UV.nu. Alla rättigheter reserverade.</p>
+  </footer>
 
-function uvLevelLabel(value){ if(value<=2) return "Låg"; if(value<=5) return "Måttlig"; if(value<=7) return "Hög"; if(value<=10) return "Mycket hög"; return "Extrem"; }
-function uvColor(value){ if(value<=2) return "#A8D5BA"; if(value<=5) return "#F3E79B"; if(value<=7) return "#F7B267"; if(value<=10) return "#E76F51"; return "#9D4EDD"; }
+  <!-- JS for live weather & UV with dynamic tips -->
+  <script>
+    const apiKey = 'eb45ab32159d3a2bb8369a2dfc5be8bb';
+    const cities = [
+      { name: 'Stockholm', lat: 59.3293, lon: 18.0686 },
+      { name: 'Göteborg', lat: 57.7089, lon: 11.9746 },
+      { name: 'Malmö', lat: 55.6050, lon: 13.0038 }
+    ];
 
-async function loadCity(city){
-  const coords = await fetchCoordinates(city);
-  if(!coords) return;
-  document.getElementById("cityName").innerText = coords.name;
+    function getUVClass(uv) {
+      if (uv <= 2) return 'uv-low';
+      if (uv <= 5) return 'uv-moderate';
+      return 'uv-high';
+    }
 
-  const weather = await fetchWeather(coords.latitude, coords.longitude);
-  const nowHour = new Date().getHours();
-  const uvArray = weather.hourly.uv_index;
+    function getTips(uv) {
+      if (uv <= 2) return ['Låg UV-risk, solkräm valfritt.', 'Bär solglasögon om du vill.'];
+      if (uv <= 5) return ['Moderat UV-risk, använd solkräm SPF 30.', 'Undvik solen mitt på dagen.'];
+      return ['Hög UV-risk, använd solkräm SPF 50+', 'Täck huden och använd hatt.', 'Sök skugga mellan 11-15.'];
+    }
 
-  document.getElementById("tempValue").innerText = weather.current_weather.temperature + '°C';
-  document.getElementById("precipValue").innerText = weather.daily.precipitation_probability_max[0] + '%';
+    async function fetchCityData(city) {
+      const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&units=metric&appid=${apiKey}&lang=sv`);
+      const weatherData = await weatherRes.json();
+      
+      const uvRes = await fetch(`https://api.openweathermap.org/data/2.5/uvi?lat=${city.lat}&lon=${city.lon}&appid=${apiKey}`);
+      const uvData = await uvRes.json();
 
-  const timeline = document.getElementById("uvTimeline");
-  timeline.innerHTML = '';
-  for(let i=0;i<24;i++){
-    const div = document.createElement('div');
-    div.className = 'uv-hour';
-    if(i===nowHour) div.classList.add('current-hour');
-    div.style.background = uvColor(uvArray[i]) + '33';
-    div.innerHTML = `<div>${i}h</div><strong>${uvArray[i]}</strong>`;
-    timeline.appendChild(div);
-  }
-}
+      return {
+        name: city.name,
+        temp: weatherData.main.temp.toFixed(1),
+        weather: weatherData.weather[0].description,
+        icon: `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`,
+        uv: uvData.value
+      };
+    }
 
-document.getElementById('cityInput').addEventListener('change',(e)=>{ loadCity(e.target.value); });
-loadCity(defaultCity);
+    async function renderCities() {
+      const container = document.getElementById('cities');
+      const tipsList = document.getElementById('tips-list');
+      container.innerHTML = '';
+      tipsList.innerHTML = '';
 
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
-</script>
+      for (let city of cities) {
+        const data = await fetchCityData(city);
+        
+        // Create UV/weather card
+        const card = document.createElement('div');
+        card.className = `shadow p-4 rounded text-center ${getUVClass(data.uv)}`;
+        card.innerHTML = `
+          <h3 class="font-bold mb-2">${data.name}</h3>
+          <img src="${data.icon}" alt="${data.weather}" class="mx-auto">
+          <p class="text-xl font-semibold">${data.temp}°C</p>
+          <p class="capitalize mb-2">${data.weather}</p>
+          <p class="text-2xl font-bold">UV: ${data.uv}</p>
+        `;
+        container.appendChild(card);
+
+        // Add tips dynamically
+        const cityTips = getTips(data.uv);
+        cityTips.forEach(tip => {
+          const li = document.createElement('li');
+          li.textContent = `${data.name}: ${tip}`;
+          tipsList.appendChild(li);
+        });
+      }
+    }
+
+    renderCities();
+  </script>
+
 </body>
 </html>

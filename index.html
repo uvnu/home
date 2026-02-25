@@ -1,52 +1,48 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="sv" x-data="weatherApp()">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Väder i Sverige</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Väder & UV Dashboard</title>
+    <link href="/assets/css/tailwind.css" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-light">
-  <div class="container py-4">
+<body class="bg-gradient-to-tr from-blue-100 to-purple-100 min-h-screen p-4 font-sans">
 
-    <h1 class="mb-4 text-center">Väder och UV-index i Sverige</h1>
-
-    <!-- City Search -->
-    <div class="input-group mb-4">
-      <input type="text" id="cityInput" class="form-control" placeholder="Ange stad, t.ex. Stockholm">
-      <button class="btn btn-primary" id="searchBtn">Sök</button>
+  <!-- Header / City Selection -->
+  <header class="mb-6 flex justify-between items-center">
+    <h1 class="text-4xl font-extrabold text-gray-900" x-text="city"></h1>
+    <div>
+      <input type="text" placeholder="By (Sverige)" x-model="inputCity" @keyup.enter="updateCity" class="px-3 py-2 rounded-lg shadow-md border border-gray-300">
+      <button @click="updateCity" class="ml-2 px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md">Sök</button>
     </div>
+  </header>
 
-    <!-- Weather Cards -->
-    <div class="row" id="weatherCards">
-
-      <!-- UV Card -->
-      <div class="col-md-6 mb-3">
-        <div class="card text-white bg-warning h-100" id="uvCard">
-          <div class="card-body">
-            <h5 class="card-title">UV-index</h5>
-            <p class="card-text fs-1" id="uvValue">--</p>
-            <p class="card-text" id="uvAdvice">Ladda ner skydd mot solen!</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Temperature/Weather Card -->
-      <div class="col-md-6 mb-3">
-        <div class="card h-100" id="tempCard">
-          <div class="card-body">
-            <h5 class="card-title">Väder</h5>
-            <p class="card-text fs-1" id="temperature">-- °C</p>
-            <p class="card-text" id="weatherDesc">--</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
+  <!-- Current Weather Card -->
+  <div class="backdrop-blur-lg bg-white/70 p-6 rounded-3xl shadow-lg mb-6 flex flex-col sm:flex-row sm:justify-between">
+    <div class="text-6xl font-bold text-gray-800" x-text="current.temp + '°C'"></div>
+    <div class="text-2xl text-gray-700 mt-2 sm:mt-0" x-text="current.precip + '% nederbörd'"></div>
   </div>
 
-  <script src="js/app.js"></script>
+  <!-- UV Timeline -->
+  <div class="backdrop-blur-md bg-white/70 p-6 rounded-2xl shadow-md mb-6">
+    <div class="text-xl font-semibold mb-2">UV-index idag</div>
+    <div class="flex gap-2 overflow-x-auto">
+      <template x-for="hour in hourly" :key="hour.dt">
+        <div class="w-10 rounded-lg" :class="hour.dt === currentHour ? 'border-2 border-blue-500' : ''" :style="`height: ${hour.uvi*8}px; background-color: ${getUVColor(hour.uvi)}`"></div>
+      </template>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="flex gap-3">
+    <template x-for="rec in recommendations" :key="rec">
+      <div class="px-4 py-2 rounded-full bg-yellow-200 text-gray-900 font-semibold" x-text="rec"></div>
+    </template>
+  </div>
+
+  <script src="/assets/js/main.js"></script>
 </body>
 </html>

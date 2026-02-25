@@ -1,10 +1,19 @@
-// UV.nu MVP (GitHub Pages, OpenWeather One Call 3.0 + Geocoding)
+// UV.nu MVP (GitHub Pages) — Open-Meteo (no API key)
+// - Auto-detect location (browser geolocation) + city search override
+// - Fallback default: Stockholm (if no saved location + geolocation denied/fails)
+// - Shows: UV now (hero), today's max + peak time, hourly strip, recommendation list
 //
 // Docs:
-// - One Call API 3.0 (current + hourly includes uvi)  https://openweathermap.org/api/one-call-3
-// - Geocoding API (direct geocoding)                  https://openweathermap.org/api/geocoding-api
+// - Open-Meteo Forecast API:   https://open-meteo.com/en/docs
+// - Open-Meteo Geocoding API: https://open-meteo.com/en/docs/geocoding-api
 
-const API_KEY = "eb45ab32159d3a2bb8369a2dfc5be8bb";
+// Default fallback location (never show an empty page)
+const DEFAULT_LOCATION = {
+  name: "Stockholm",
+  country: "SE",
+  lat: 59.3293,
+  lon: 18.0686,
+};
 
 // DOM
 const el = {
@@ -27,14 +36,10 @@ const el = {
 };
 
 // Simple storage: last chosen location
-const STORAGE_KEY = "uvnu_location_v1"; // { name, lat, lon, country }
+const STORAGE_KEY = "uvnu_location_v1"; // { name, lat, lon, country, state }
 
 // ---------- Helpers ----------
-const fmtTime = (unixSeconds, tzOffsetSeconds) => {
-  // Use location timezone offset if provided. We don’t need perfect i18n yet.
-  const d = new Date((unixSeconds + tzOffsetSeconds) * 1000);
-  return d.toISOString().slice(11, 16); // HH:MM
-};
+const round1 = (n) => Math.round(n * 10) / 10;
 
 const fmtUpdated = () => {
   const d = new Date();
@@ -42,8 +47,6 @@ const fmtUpdated = () => {
   const mm = String(d.getMinutes()).padStart(2, "0");
   return `Uppdaterad ${hh}:${mm}`;
 };
-
-const round1 = (n) => Math.round(n * 10) / 10;
 
 function uvBand(uvi) {
   if (uvi < 3) return { label: "Låg", key: "low" };
@@ -62,11 +65,35 @@ function uvHintText(uvi) {
 }
 
 function recListFor(uvi) {
-  if (uvi < 3) return ["Solglasögon om du vill", "Håll koll om du är extra känslig", "Barn: skydda ändå vid längre utevistelse"];
-  if (uvi < 6) return ["SPF 30 vid längre utevistelse", "Solglasögon", "Sök skugga om du är ute mitt på dagen"];
-  if (uvi < 8) return ["SPF 30+ och fyll på varannan timme", "Keps/solhatt + solglasögon", "Planera skugga 11–15"];
-  if (uvi < 11) return ["SPF 50 och fyll på ofta", "Täckande kläder/solhatt", "Undvik direkt sol 11–15"];
-  return ["SPF 50+ och täckande kläder", "Stanna i skugga så mycket som möjligt", "Extra försiktighet med barn"];
+  if (uvi < 3)
+    return [
+      "Solglasögon om du vill",
+      "Håll koll om du är extra känslig",
+      "Barn: skydda ändå vid längre utevistelse",
+    ];
+  if (uvi < 6)
+    return [
+      "SPF 30 vid längre utevistelse",
+      "Solglasögon",
+      "Sök skugga om du är ute mitt på dagen",
+    ];
+  if (uvi < 8)
+    return [
+      "SPF 30+ och fyll på varannan timme",
+      "Keps/solhatt + solglasögon",
+      "Planera skugga 11–15",
+    ];
+  if (uvi < 11)
+    return [
+      "SPF 50 och fyll på ofta",
+      "Täckande kläder/solhatt",
+      "Undvik direkt sol 11–15",
+    ];
+  return [
+    "SPF 50+ och täckande kläder",
+    "Stanna i skugga så mycket som möjligt",
+    "Extra försiktighet med barn",
+  ];
 }
 
 function todayCommentText(maxUvi) {
@@ -85,38 +112,71 @@ function setStatus(msg) {
   el.status.textContent = msg || "";
 }
 
-// ---------- OpenWeather calls ----------
+function saveLoc(loc) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(loc));
+}
+
+function loadLoc() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 async function fetchJSON(url) {
   const res = await fetch(url);
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`HTTP ${res.status} – ${text.slice(0, 120)}`);
+    throw new Error(`HTTP ${res.status} – ${text.slice(0, 140)}`);
   }
   return res.json();
 }
 
+// ---------- Open-Meteo calls ----------
 async function geocodeCity(q) {
-  // Direct geocoding
-  const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=1&appid=${API_KEY}`;
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+    q
+  )}&count=1&language=sv&format=json`;
   const data = await fetchJSON(url);
-  if (!Array.isArray(data) || data.length === 0) return null;
-  const g = data[0];
+  const r = data?.results?.[0];
+  if (!r) return null;
   return {
-    name: g.name,
-    country: g.country,
-    lat: g.lat,
-    lon: g.lon,
-    state: g.state,
+    name: r.name,
+    country: r.country_code || r.country,
+    lat: r.latitude,
+    lon: r.longitude,
+    state: r.admin1,
   };
 }
 
-async function oneCall(lat, lon) {
-  // One Call 3.0 current + hourly. Use metric for future add-ons.
-  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,daily,alerts&units=metric&appid=${API_KEY}`;
+async function openMeteoUV(lat, lon) {
+  // UV-only MVP, timezone=auto returns local times for the selected location
+  const url =
+    `https://api.open-meteo.com/v1/forecast` +
+    `?latitude=${lat}&longitude=${lon}` +
+    `&current=uv_index` +
+    `&hourly=uv_index` +
+    `&daily=uv_index_max` +
+    `&timezone=auto` +
+    `&forecast_days=3`;
   return fetchJSON(url);
 }
 
-// ---------- Rendering ----------
+// ---------- Location flow ----------
+function getBrowserLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation)
+      reject(new Error("Geolocation stöds inte i din webbläsare."));
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      (err) => reject(new Error(err.message || "Kunde inte hämta din plats.")),
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 10 * 60 * 1000 }
+    );
+  });
+}
+
 function renderLocation(loc) {
   const parts = [loc.name];
   if (loc.state) parts.push(loc.state);
@@ -125,30 +185,53 @@ function renderLocation(loc) {
   el.updatedAt.textContent = fmtUpdated();
 }
 
+// ---------- Rendering ----------
 function renderUV(data) {
-  const tz = data.timezone_offset ?? 0;
+  // Open-Meteo format:
+  // data.current.uv_index
+  // data.hourly.time[] (ISO), data.hourly.uv_index[]
+  // data.daily.time[] (date), data.daily.uv_index_max[]
+  const nowUvi = data?.current?.uv_index;
+  if (typeof nowUvi !== "number")
+    throw new Error("Hittade ingen UV-data (current.uv_index).");
 
-  const nowUvi = data?.current?.uvi;
-  if (typeof nowUvi !== "number") throw new Error("Hittade ingen UV-data (current.uvi).");
-
-  const band = uvBand(nowUvi);
+  const bandNow = uvBand(nowUvi);
   el.uvNow.textContent = round1(nowUvi).toFixed(1);
-  el.uvLevel.textContent = band.label;
+  el.uvLevel.textContent = bandNow.label;
   el.uvHint.textContent = uvHintText(nowUvi);
 
-  // Today max from next 24 hours
-  const hourly = Array.isArray(data.hourly) ? data.hourly.slice(0, 24) : [];
-  const withUvi = hourly.filter(h => typeof h.uvi === "number");
-  let maxObj = null;
-  for (const h of withUvi) {
-    if (!maxObj || h.uvi > maxObj.uvi) maxObj = h;
-  }
-  if (maxObj) {
-    el.uvMax.textContent = round1(maxObj.uvi).toFixed(1);
-    el.uvMaxTime.textContent = `kring ${fmtTime(maxObj.dt, tz)}`;
-    const maxBand = uvBand(maxObj.uvi);
-    el.todaySummary.textContent = `Max ${Math.round(maxObj.uvi)} (${maxBand.label})`;
-    el.todayComment.textContent = todayCommentText(maxObj.uvi);
+  // Today max (daily)
+  const todayMax = data?.daily?.uv_index_max?.[0];
+  const todayDate = data?.daily?.time?.[0]; // "YYYY-MM-DD"
+
+  if (typeof todayMax === "number") {
+    el.uvMax.textContent = round1(todayMax).toFixed(1);
+
+    // Estimate peak time by finding the max in hourly values for today's date
+    const times = data?.hourly?.time || [];
+    const uvs = data?.hourly?.uv_index || [];
+    let bestIdx = -1;
+    let bestVal = -Infinity;
+
+    for (let i = 0; i < times.length; i++) {
+      if (!times[i]?.startsWith(todayDate)) continue;
+      const v = uvs[i];
+      if (typeof v === "number" && v > bestVal) {
+        bestVal = v;
+        bestIdx = i;
+      }
+    }
+
+    if (bestIdx >= 0) {
+      const hhmm = times[bestIdx].slice(11, 16); // "HH:MM"
+      el.uvMaxTime.textContent = `kring ${hhmm}`;
+    } else {
+      el.uvMaxTime.textContent = "—";
+    }
+
+    const maxBand = uvBand(todayMax);
+    el.todaySummary.textContent = `Max ${Math.round(todayMax)} (${maxBand.label})`;
+    el.todayComment.textContent = todayCommentText(todayMax);
   } else {
     el.uvMax.textContent = "—";
     el.uvMaxTime.textContent = "—";
@@ -156,17 +239,31 @@ function renderUV(data) {
     el.todayComment.textContent = "—";
   }
 
-  // Recommendation list based on current UV (simple + actionable)
+  // Recommendation list based on current UV
   const rec = recListFor(nowUvi);
-  el.recList.innerHTML = rec.map(x => `<li>${x}</li>`).join("");
+  el.recList.innerHTML = rec.map((x) => `<li>${x}</li>`).join("");
 
-  // Forecast strip: next 8 hours
+  // Forecast strip: next 8 hours from "now"
   el.forecastStrip.innerHTML = "";
-  const next = hourly.slice(0, 8);
-  for (const h of next) {
-    const u = (typeof h.uvi === "number") ? Math.round(h.uvi) : "—";
-    const lbl = (typeof h.uvi === "number") ? uvBand(h.uvi).label : "";
-    const t = (typeof h.dt === "number") ? fmtTime(h.dt, tz) : "";
+  const times = data?.hourly?.time || [];
+  const uvs = data?.hourly?.uv_index || [];
+  const now = new Date();
+
+  // Find first hourly index >= now
+  let start = 0;
+  for (let i = 0; i < times.length; i++) {
+    const t = new Date(times[i]);
+    if (t >= now) {
+      start = i;
+      break;
+    }
+  }
+
+  for (let i = start; i < Math.min(start + 8, times.length); i++) {
+    const t = times[i]?.slice(11, 16) || "";
+    const v = uvs[i];
+    const u = typeof v === "number" ? Math.round(v) : "—";
+    const lbl = typeof v === "number" ? uvBand(v).label : "";
     const card = document.createElement("div");
     card.className = "glass mini-card p-3";
     card.innerHTML = `
@@ -178,36 +275,12 @@ function renderUV(data) {
   }
 }
 
-// ---------- Location flow ----------
-function saveLoc(loc) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(loc));
-}
-function loadLoc() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function getBrowserLocation() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) reject(new Error("Geolocation stöds inte i din webbläsare."));
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      (err) => reject(new Error(err.message || "Kunde inte hämta din plats.")),
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 10 * 60 * 1000 }
-    );
-  });
-}
-
 async function setLocationAndRefresh(loc) {
   setError("");
   setStatus("Hämtar UV-data…");
   renderLocation(loc);
 
-  const data = await oneCall(loc.lat, loc.lon);
+  const data = await openMeteoUV(loc.lat, loc.lon);
   renderUV(data);
 
   setStatus("");
@@ -218,8 +291,7 @@ async function useMyLocation() {
   setStatus("Hämtar din plats… (tillåt platsåtkomst)");
   const { lat, lon } = await getBrowserLocation();
 
-  // For display name, do a quick reverse-geocode via direct geocode? (optional)
-  // Keep it simple: show coordinates until user searches a city.
+  // Minimal: label as "Min plats" until user searches a city
   const loc = { name: "Min plats", lat, lon, country: "" };
   saveLoc(loc);
   await setLocationAndRefresh(loc);
@@ -229,7 +301,10 @@ async function searchAndSetCity(q) {
   setError("");
   setStatus("Söker plats…");
   const loc = await geocodeCity(q);
-  if (!loc) throw new Error("Hittade ingen matchning. Prova t.ex. “Göteborg” eller “Umeå”.");
+  if (!loc)
+    throw new Error(
+      "Hittade ingen matchning. Prova t.ex. “Göteborg” eller “Umeå”."
+    );
   saveLoc(loc);
   await setLocationAndRefresh(loc);
 }
@@ -261,8 +336,16 @@ function wireInputs() {
     try {
       await useMyLocation();
     } catch (e) {
-      setStatus("");
-      setError(e.message || String(e));
+      // If user clicks "Min plats" and denies, fallback to default
+      setStatus("Visar standardplats (Stockholm)…");
+      setError("");
+      try {
+        saveLoc(DEFAULT_LOCATION);
+        await setLocationAndRefresh(DEFAULT_LOCATION);
+      } catch (err) {
+        setStatus("");
+        setError("Kunde inte hämta UV-data.");
+      }
     }
   });
 }
@@ -270,25 +353,34 @@ function wireInputs() {
 (async function init() {
   wireInputs();
 
-  // Prefer saved location (travel-friendly)
+  // 1) Prefer saved location (travel-friendly)
   const saved = loadLoc();
   if (saved?.lat && saved?.lon) {
     try {
       await setLocationAndRefresh(saved);
       return;
     } catch (e) {
-      // fall through to browser location
       console.warn(e);
+      // fall through
     }
   }
 
-  // First visit: ask for geolocation
+  // 2) Try browser geolocation
   try {
     await useMyLocation();
+    return;
   } catch (e) {
-    setStatus("");
-    setError("Tillåt platsåtkomst eller sök en stad ovan.");
-    el.locationName.textContent = "Välj plats";
-    el.updatedAt.textContent = "—";
+    // 3) Fallback to Stockholm
+    setStatus("Visar standardplats (Stockholm)…");
+    setError("");
+    try {
+      saveLoc(DEFAULT_LOCATION);
+      await setLocationAndRefresh(DEFAULT_LOCATION);
+    } catch (err) {
+      setStatus("");
+      setError("Kunde inte hämta UV-data.");
+      el.locationName.textContent = "Välj plats";
+      el.updatedAt.textContent = "—";
+    }
   }
 })();

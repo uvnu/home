@@ -2,69 +2,56 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UV.nu</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UV.nu - Bootstrap 5</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .uv-low { background-color: #a3f7a3; }       /* Green */
-    .uv-moderate { background-color: #fff3a3; }  /* Yellow */
-    .uv-high { background-color: #ffb3a3; }      /* Red */
+    .uv-low { background-color: #a3f7a3; }
+    .uv-moderate { background-color: #fff3a3; }
+    .uv-high { background-color: #ffb3a3; }
   </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-light">
 
-  <!-- Header -->
-  <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">UV.nu</h1>
-    <nav>
-      <ul class="flex space-x-4">
-        <li><a href="#home" class="hover:underline">Hem</a></li>
-        <li><a href="#uv-index" class="hover:underline">UV-index</a></li>
-        <li><a href="#tips" class="hover:underline">Tips</a></li>
-        <li><a href="#kontakt" class="hover:underline">Kontakt</a></li>
-      </ul>
-    </nav>
-  </header>
+  <!-- Header / City input -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">UV.nu</a>
+      <form class="d-flex" id="city-form">
+        <input class="form-control me-2" type="text" placeholder="Ange stad/town" id="city-input" required>
+        <button class="btn btn-light" type="submit">Sök</button>
+      </form>
+    </div>
+  </nav>
 
-  <!-- Hero Section -->
-  <section id="home" class="bg-blue-100 p-8 text-center">
-    <h2 class="text-3xl font-bold mb-4">Håll koll på UV-strålningen!</h2>
-    <p class="mb-6">Få dagens UV-index och tips för solskydd direkt här.</p>
-    <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Se UV-index</button>
-  </section>
+  <div class="container my-4">
 
-  <!-- UV & Weather Section -->
-  <section id="uv-index" class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6" id="cities">
-    <!-- Cards populated dynamically -->
-  </section>
+    <!-- UV Now -->
+    <div class="card mb-3" id="uv-now-card">
+      <div class="card-body">
+        <h5 class="card-title">UV-index nu</h5>
+        <p class="card-text" id="uv-now">Laddar...</p>
+      </div>
+    </div>
 
-  <!-- Tips Section -->
-  <section id="tips" class="bg-yellow-100 p-8">
-    <h2 class="text-2xl font-bold mb-4">Solskyddstips</h2>
-    <ul id="tips-list" class="list-disc pl-5 space-y-2">
-      <!-- Tips populated dynamically -->
-    </ul>
-  </section>
+    <!-- UV Today Commentary -->
+    <div class="card mb-3" id="uv-today-card">
+      <div class="card-body">
+        <h5 class="card-title">UV-index idag</h5>
+        <p class="card-text" id="uv-today">Laddar...</p>
+      </div>
+    </div>
 
-  <!-- Contact Section -->
-  <section id="kontakt" class="p-8 text-center">
-    <h2 class="text-2xl font-bold mb-4">Kontakt</h2>
-    <p>Frågor? Maila oss på <a href="mailto:info@uv.nu" class="text-blue-600 hover:underline">info@uv.nu</a></p>
-  </section>
+    <!-- Forecast / Prognos -->
+    <h4>Prognos UV-index</h4>
+    <div class="row" id="uv-forecast">
+      <!-- Forecast cards go here -->
+    </div>
 
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-white p-4 text-center">
-    <p>&copy; 2026 UV.nu. Alla rättigheter reserverade.</p>
-  </footer>
+  </div>
 
-  <!-- JS for live weather & UV with dynamic tips -->
   <script>
     const apiKey = 'eb45ab32159d3a2bb8369a2dfc5be8bb';
-    const cities = [
-      { name: 'Stockholm', lat: 59.3293, lon: 18.0686 },
-      { name: 'Göteborg', lat: 57.7089, lon: 11.9746 },
-      { name: 'Malmö', lat: 55.6050, lon: 13.0038 }
-    ];
 
     function getUVClass(uv) {
       if (uv <= 2) return 'uv-low';
@@ -72,61 +59,78 @@
       return 'uv-high';
     }
 
-    function getTips(uv) {
-      if (uv <= 2) return ['Låg UV-risk, solkräm valfritt.', 'Bär solglasögon om du vill.'];
-      if (uv <= 5) return ['Moderat UV-risk, använd solkräm SPF 30.', 'Undvik solen mitt på dagen.'];
-      return ['Hög UV-risk, använd solkräm SPF 50+', 'Täck huden och använd hatt.', 'Sök skugga mellan 11-15.'];
+    function getUVComment(uv) {
+      if (uv <= 2) return 'Låg UV-risk idag. Skydd valfritt.';
+      if (uv <= 5) return 'Moderat UV-risk. Använd solkräm SPF 30 och skydd.';
+      return 'Hög UV-risk. Använd SPF 50+, täck huden och sök skugga mitt på dagen.';
     }
 
     async function fetchCityData(city) {
-      const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&units=metric&appid=${apiKey}&lang=sv`);
-      const weatherData = await weatherRes.json();
-      
-      const uvRes = await fetch(`https://api.openweathermap.org/data/2.5/uvi?lat=${city.lat}&lon=${city.lon}&appid=${apiKey}`);
-      const uvData = await uvRes.json();
+      try {
+        // Current weather
+        const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=sv`);
+        if (!weatherRes.ok) throw new Error('Stad inte hittad');
+        const weatherData = await weatherRes.json();
 
-      return {
-        name: city.name,
-        temp: weatherData.main.temp.toFixed(1),
-        weather: weatherData.weather[0].description,
-        icon: `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`,
-        uv: uvData.value
-      };
-    }
+        // Current UV
+        const uvRes = await fetch(`https://api.openweathermap.org/data/2.5/uvi?lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&appid=${apiKey}`);
+        const uvData = await uvRes.json();
 
-    async function renderCities() {
-      const container = document.getElementById('cities');
-      const tipsList = document.getElementById('tips-list');
-      container.innerHTML = '';
-      tipsList.innerHTML = '';
+        // 7-day forecast (One Call API)
+        const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&exclude=minutely,hourly,alerts&units=metric&appid=${apiKey}&lang=sv`);
+        const forecastData = await forecastRes.json();
 
-      for (let city of cities) {
-        const data = await fetchCityData(city);
-        
-        // Create UV/weather card
-        const card = document.createElement('div');
-        card.className = `shadow p-4 rounded text-center ${getUVClass(data.uv)}`;
-        card.innerHTML = `
-          <h3 class="font-bold mb-2">${data.name}</h3>
-          <img src="${data.icon}" alt="${data.weather}" class="mx-auto">
-          <p class="text-xl font-semibold">${data.temp}°C</p>
-          <p class="capitalize mb-2">${data.weather}</p>
-          <p class="text-2xl font-bold">UV: ${data.uv}</p>
-        `;
-        container.appendChild(card);
-
-        // Add tips dynamically
-        const cityTips = getTips(data.uv);
-        cityTips.forEach(tip => {
-          const li = document.createElement('li');
-          li.textContent = `${data.name}: ${tip}`;
-          tipsList.appendChild(li);
-        });
+        return { weatherData, uvData, forecastData };
+      } catch (err) {
+        alert(err.message);
+        return null;
       }
     }
 
-    renderCities();
+    function renderUVNow(uv) {
+      const card = document.getElementById('uv-now');
+      card.textContent = `${uv.value} (risk: ${getUVComment(uv.value)})`;
+      card.parentElement.className = `card mb-3 ${getUVClass(uv.value)}`;
+    }
+
+    function renderUVToday(uv) {
+      document.getElementById('uv-today').textContent = getUVComment(uv.value);
+    }
+
+    function renderForecast(forecast) {
+      const container = document.getElementById('uv-forecast');
+      container.innerHTML = '';
+      forecast.daily.slice(0, 5).forEach(day => {
+        const date = new Date(day.dt * 1000).toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric', month: 'numeric' });
+        const uv = day.uvi;
+        const temp = Math.round(day.temp.day);
+        const card = document.createElement('div');
+        card.className = 'col-md-2 mb-3';
+        card.innerHTML = `
+          <div class="card ${getUVClass(uv)} text-center">
+            <div class="card-body">
+              <h6>${date}</h6>
+              <p class="mb-1">UV: ${uv}</p>
+              <p>${temp}°C</p>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('city-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const city = document.getElementById('city-input').value.trim();
+      if (!city) return;
+      const data = await fetchCityData(city);
+      if (!data) return;
+      renderUVNow(data.uvData);
+      renderUVToday(data.uvData);
+      renderForecast(data.forecastData);
+    });
   </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

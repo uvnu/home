@@ -1,0 +1,21 @@
+body {
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+#uvCard {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  transition: transform 0.3s ease;
+}
+
+#uvCard:hover {
+  transform: scale(1.05);
+}
+
+#tempCard {
+  background: #f8f9fa;
+  transition: transform 0.3s ease;
+}
+
+#tempCard:hover {
+  transform: scale(1.03);
+}

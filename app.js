@@ -1,7 +1,9 @@
 // UV.nu MVP (GitHub Pages) — Open-Meteo (no API key)
 // - Auto-detect location (browser geolocation) + city search override
 // - Fallback default: Stockholm (if no saved location + geolocation denied/fails)
-// - Shows: UV now (hero), today's max + peak time, hourly strip, recommendation list
+// - Forecast strip auto-switch:
+//    * Daytime: next 8 hours UV
+//    * Nighttime (very low current UV): next 5 days max UV
 //
 // Docs:
 // - Open-Meteo Forecast API:   https://open-meteo.com/en/docs
@@ -21,18 +23,26 @@ const el = {
   updatedAt: document.getElementById("updatedAt"),
   status: document.getElementById("status"),
   error: document.getElementById("error"),
+
   uvNow: document.getElementById("uvNow"),
   uvLevel: document.getElementById("uvLevel"),
   uvHint: document.getElementById("uvHint"),
+
   uvMax: document.getElementById("uvMax"),
   uvMaxTime: document.getElementById("uvMaxTime"),
+
   todaySummary: document.getElementById("todaySummary"),
   todayComment: document.getElementById("todayComment"),
+
   recList: document.getElementById("recList"),
   forecastStrip: document.getElementById("forecastStrip"),
+
   cityInput: document.getElementById("cityInput"),
   cityInputMobile: document.getElementById("cityInputMobile"),
   useMyLocationBtn: document.getElementById("useMyLocationBtn"),
+
+  // Optional: if you add <div id="forecastModeLabel">Kommande timmar</div> in index.html
+  forecastModeLabel: document.getElementById("forecastModeLabel"),
 };
 
 // Simple storage: last chosen location
@@ -153,6 +163,7 @@ async function geocodeCity(q) {
 
 async function openMeteoUV(lat, lon) {
   // UV-only MVP, timezone=auto returns local times for the selected location
+  // forecast_days=5 so nighttime view can show next 5 days max UV
   const url =
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${lat}&longitude=${lon}` +
@@ -160,7 +171,7 @@ async function openMeteoUV(lat, lon) {
     `&hourly=uv_index` +
     `&daily=uv_index_max` +
     `&timezone=auto` +
-    `&forecast_days=3`;
+    `&forecast_days=5`;
   return fetchJSON(url);
 }
 
@@ -186,6 +197,80 @@ function renderLocation(loc) {
 }
 
 // ---------- Rendering ----------
+function renderForecastStrip(nowUvi, data) {
+  el.forecastStrip.innerHTML = "";
+
+  // If UV is basically zero, assume "night mode"
+  const nowIsNight = nowUvi < 0.5;
+
+  if (el.forecastModeLabel) {
+    el.forecastModeLabel.textContent = nowIsNight ? "Kommande dagar" : "Kommande timmar";
+  }
+
+  if (nowIsNight) {
+    // Daily max view (next 5 days)
+    const dTimes = data?.daily?.time || []; // ["YYYY-MM-DD", ...]
+    const dMax = data?.daily?.uv_index_max || [];
+    const count = Math.min(5, dTimes.length, dMax.length);
+
+    for (let i = 0; i < count; i++) {
+      const dateStr = dTimes[i];
+      const v = dMax[i];
+      const u = typeof v === "number" ? Math.round(v) : "—";
+      const lbl = typeof v === "number" ? uvBand(v).label : "";
+
+      let dayLabel = "—";
+      if (i === 0) dayLabel = "Idag";
+      else if (i === 1) dayLabel = "Imorgon";
+      else {
+        const d = new Date(dateStr + "T12:00:00");
+        dayLabel = d.toLocaleDateString("sv-SE", { weekday: "short" }); // "ons", "tors"
+      }
+
+      const card = document.createElement("div");
+      card.className = "glass mini-card p-3";
+      card.innerHTML = `
+        <div class="small dim">${dayLabel}</div>
+        <div class="h4 mb-0">${u}</div>
+        <div class="small dim">${lbl}</div>
+      `;
+      el.forecastStrip.appendChild(card);
+    }
+    return;
+  }
+
+  // Hourly view (next 8 hours from now)
+  const times = data?.hourly?.time || [];
+  const uvs = data?.hourly?.uv_index || [];
+  const now = new Date();
+
+  // Find first hourly index >= now
+  let start = 0;
+  for (let i = 0; i < times.length; i++) {
+    const t = new Date(times[i]);
+    if (t >= now) {
+      start = i;
+      break;
+    }
+  }
+
+  for (let i = start; i < Math.min(start + 8, times.length); i++) {
+    const t = times[i]?.slice(11, 16) || "";
+    const v = uvs[i];
+    const u = typeof v === "number" ? Math.round(v) : "—";
+    const lbl = typeof v === "number" ? uvBand(v).label : "";
+
+    const card = document.createElement("div");
+    card.className = "glass mini-card p-3";
+    card.innerHTML = `
+      <div class="small dim">${t}</div>
+      <div class="h4 mb-0">${u}</div>
+      <div class="small dim">${lbl}</div>
+    `;
+    el.forecastStrip.appendChild(card);
+  }
+}
+
 function renderUV(data) {
   // Open-Meteo format:
   // data.current.uv_index
@@ -243,36 +328,8 @@ function renderUV(data) {
   const rec = recListFor(nowUvi);
   el.recList.innerHTML = rec.map((x) => `<li>${x}</li>`).join("");
 
-  // Forecast strip: next 8 hours from "now"
-  el.forecastStrip.innerHTML = "";
-  const times = data?.hourly?.time || [];
-  const uvs = data?.hourly?.uv_index || [];
-  const now = new Date();
-
-  // Find first hourly index >= now
-  let start = 0;
-  for (let i = 0; i < times.length; i++) {
-    const t = new Date(times[i]);
-    if (t >= now) {
-      start = i;
-      break;
-    }
-  }
-
-  for (let i = start; i < Math.min(start + 8, times.length); i++) {
-    const t = times[i]?.slice(11, 16) || "";
-    const v = uvs[i];
-    const u = typeof v === "number" ? Math.round(v) : "—";
-    const lbl = typeof v === "number" ? uvBand(v).label : "";
-    const card = document.createElement("div");
-    card.className = "glass mini-card p-3";
-    card.innerHTML = `
-      <div class="small dim">${t}</div>
-      <div class="h4 mb-0">${u}</div>
-      <div class="small dim">${lbl}</div>
-    `;
-    el.forecastStrip.appendChild(card);
-  }
+  // Forecast strip (hours by day, days by night)
+  renderForecastStrip(nowUvi, data);
 }
 
 async function setLocationAndRefresh(loc) {

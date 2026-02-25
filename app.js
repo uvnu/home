@@ -1,10 +1,8 @@
 // app.js (complete) — Open-Meteo (no API key)
-// Layout supports:
-// - Two top cards: UV now + Peak today
-// - Narrative card for today
-// - Recommendation list
-// - Forecast strip switches: hours (daytime) vs days max (nighttime)
-// - Forecast label + summary line updates
+// + PWA install support:
+//   - Install button appears on supported browsers (Android Chrome etc.)
+//   - iOS hint shown (Share → Add to Home Screen)
+// + Forecast switches: hours (daytime) vs days max (nighttime)
 
 const DEFAULT_LOCATION = {
   name: "Stockholm",
@@ -39,10 +37,15 @@ const el = {
   cityInput: document.getElementById("cityInput"),
   cityInputMobile: document.getElementById("cityInputMobile"),
   useMyLocationBtn: document.getElementById("useMyLocationBtn"),
+
+  installBtn: document.getElementById("installBtn"),
+  installHint: document.getElementById("installHint"),
 };
 
 const STORAGE_KEY = "uvnu_location_v1"; // { name, lat, lon, country, state }
+let deferredInstallPrompt = null;
 
+// ---------- small helpers ----------
 const round1 = (n) => Math.round(n * 10) / 10;
 
 const fmtUpdated = () => {
@@ -84,11 +87,11 @@ async function fetchJSON(url) {
 
 // ---------- UV logic ----------
 function uvBand(uvi) {
-  if (uvi < 3) return { label: "Låg", key: "low" };
-  if (uvi < 6) return { label: "Måttlig", key: "mod" };
-  if (uvi < 8) return { label: "Hög", key: "high" };
-  if (uvi < 11) return { label: "Mycket hög", key: "vhigh" };
-  return { label: "Extrem", key: "extreme" };
+  if (uvi < 3) return { label: "Låg" };
+  if (uvi < 6) return { label: "Måttlig" };
+  if (uvi < 8) return { label: "Hög" };
+  if (uvi < 11) return { label: "Mycket hög" };
+  return { label: "Extrem" };
 }
 
 function uvHintText(uvi) {
@@ -189,7 +192,6 @@ function renderForecastStrip(nowUvi, data) {
     const dMax = data?.daily?.uv_index_max || [];
     const count = Math.min(5, dTimes.length, dMax.length);
 
-    // summary
     if (el.forecastSummary) {
       let bestI = 0;
       for (let i = 0; i < count; i++) {
@@ -233,7 +235,6 @@ function renderForecastStrip(nowUvi, data) {
     return;
   }
 
-  // hourly mode
   if (el.forecastSummary) el.forecastSummary.textContent = "";
 
   const times = data?.hourly?.time || [];
@@ -277,7 +278,7 @@ function renderUV(data) {
   el.uvLevel.textContent = uvBand(nowUvi).label;
   el.uvHint.textContent = uvHintText(nowUvi);
 
-  // Today max + peak time (find max hour for today's date)
+  // Find today's peak time from hourly max for today's date
   const todayMax = data?.daily?.uv_index_max?.[0];
   const todayDate = data?.daily?.time?.[0];
 
@@ -296,7 +297,6 @@ function renderUV(data) {
         bestIdx = i;
       }
     }
-
     if (bestIdx >= 0) peakTxt = times[bestIdx].slice(11, 16);
   }
 
@@ -310,7 +310,7 @@ function renderUV(data) {
     el.uvMaxTime.textContent = `kring ${peakTxt}`;
     if (el.uvMaxBand) el.uvMaxBand.textContent = uvBand(todayMax).label;
 
-    // Narrative card (Apple-ish + sound)
+    // Narrative (sound + Apple-ish)
     const narrativeTitle = `Solen i ${place} är som starkast runt ${peakTxt} med UV-index ${maxTxt}.`;
 
     let narrativeBody = "";
@@ -322,14 +322,14 @@ function renderUV(data) {
       narrativeBody = "Vid UV-index 3+ är det bra för de flesta att skydda sig. Planera skugga 11–15.";
     }
 
-    if (el.todayNarrativeTitle) el.todayNarrativeTitle.textContent = narrativeTitle;
-    if (el.todayNarrativeBody) el.todayNarrativeBody.textContent = narrativeBody;
+    el.todayNarrativeTitle.textContent = narrativeTitle;
+    el.todayNarrativeBody.textContent = narrativeBody;
   } else {
     el.uvMax.textContent = "—";
     el.uvMaxTime.textContent = "—";
     if (el.uvMaxBand) el.uvMaxBand.textContent = "";
-    if (el.todayNarrativeTitle) el.todayNarrativeTitle.textContent = "—";
-    if (el.todayNarrativeBody) el.todayNarrativeBody.textContent = "—";
+    el.todayNarrativeTitle.textContent = "—";
+    el.todayNarrativeBody.textContent = "—";
   }
 
   // Recommendation list based on current UV
@@ -378,10 +378,58 @@ async function searchAndSetCity(q) {
   setError("");
   setStatus("Söker plats…");
   const loc = await geocodeCity(q);
-  if (!loc)
-    throw new Error("Hittade ingen matchning. Prova t.ex. “Göteborg” eller “Umeå”.");
+  if (!loc) throw new Error("Hittade ingen matchning. Prova t.ex. “Göteborg” eller “Umeå”.");
   saveLoc(loc);
   await setLocationAndRefresh(loc);
+}
+
+// ---------- PWA / Install UX ----------
+function isStandalone() {
+  // iOS Safari uses navigator.standalone
+  // Others can use matchMedia display-mode
+  return (
+    window.navigator.standalone === true ||
+    window.matchMedia?.("(display-mode: standalone)")?.matches
+  );
+}
+
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+function setupInstallUX() {
+  // Android/Chrome: capture install prompt
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    if (el.installBtn) el.installBtn.style.display = "inline-block";
+  });
+
+  if (el.installBtn) {
+    el.installBtn.addEventListener("click", async () => {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice.catch(() => null);
+      deferredInstallPrompt = null;
+      el.installBtn.style.display = "none";
+    });
+  }
+
+  // iOS: show a small hint (no native prompt)
+  if (isIOS() && !isStandalone() && el.installHint) {
+    el.installHint.style.display = "block";
+    el.installHint.textContent = "Tips: På iPhone, tryck Dela och välj ”Lägg till på hemskärmen” för att spara UV.nu som app.";
+  }
+}
+
+// ---------- Service worker ----------
+async function registerSW() {
+  if (!("serviceWorker" in navigator)) return;
+  try {
+    await navigator.serviceWorker.register("/sw.js");
+  } catch {
+    // ignore
+  }
 }
 
 // ---------- Init ----------
@@ -425,6 +473,8 @@ function wireInputs() {
 }
 
 (async function init() {
+  setupInstallUX();
+  registerSW();
   wireInputs();
 
   // 1) Saved location
@@ -433,8 +483,8 @@ function wireInputs() {
     try {
       await setLocationAndRefresh(saved);
       return;
-    } catch (e) {
-      console.warn(e);
+    } catch {
+      // fall through
     }
   }
 

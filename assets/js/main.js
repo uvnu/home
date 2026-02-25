@@ -1,5 +1,4 @@
 // /assets/js/main.js
-
 function weatherApp() {
     return {
         apiKey: 'eb45ab32159d3a2bb8369a2dfc5be8bb',
@@ -51,11 +50,11 @@ function weatherApp() {
         },
 
         getUVColor(uvi) {
-            if(uvi <= 2) return '#FFD700'; // Low - Yellow
-            if(uvi <= 5) return '#FFA500'; // Moderate - Orange
-            if(uvi <= 7) return '#FF4500'; // High - Red
-            if(uvi <= 10) return '#FF0000'; // Very High - Dark Red
-            return '#8B0000'; // Extreme - Darker
+            if(uvi <= 2) return '#FFD700';
+            if(uvi <= 5) return '#FFA500';
+            if(uvi <= 7) return '#FF4500';
+            if(uvi <= 10) return '#FF0000';
+            return '#8B0000';
         }
     }
 }

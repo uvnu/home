@@ -2,135 +2,51 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>UV.nu - Bootstrap 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Väder i Sverige</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .uv-low { background-color: #a3f7a3; }
-    .uv-moderate { background-color: #fff3a3; }
-    .uv-high { background-color: #ffb3a3; }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-light">
+  <div class="container py-4">
 
-  <!-- Header / City input -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">UV.nu</a>
-      <form class="d-flex" id="city-form">
-        <input class="form-control me-2" type="text" placeholder="Ange stad/town" id="city-input" required>
-        <button class="btn btn-light" type="submit">Sök</button>
-      </form>
+    <h1 class="mb-4 text-center">Väder och UV-index i Sverige</h1>
+
+    <!-- City Search -->
+    <div class="input-group mb-4">
+      <input type="text" id="cityInput" class="form-control" placeholder="Ange stad, t.ex. Stockholm">
+      <button class="btn btn-primary" id="searchBtn">Sök</button>
     </div>
-  </nav>
 
-  <div class="container my-4">
+    <!-- Weather Cards -->
+    <div class="row" id="weatherCards">
 
-    <!-- UV Now -->
-    <div class="card mb-3" id="uv-now-card">
-      <div class="card-body">
-        <h5 class="card-title">UV-index nu</h5>
-        <p class="card-text" id="uv-now">Laddar...</p>
+      <!-- UV Card -->
+      <div class="col-md-6 mb-3">
+        <div class="card text-white bg-warning h-100" id="uvCard">
+          <div class="card-body">
+            <h5 class="card-title">UV-index</h5>
+            <p class="card-text fs-1" id="uvValue">--</p>
+            <p class="card-text" id="uvAdvice">Ladda ner skydd mot solen!</p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- UV Today Commentary -->
-    <div class="card mb-3" id="uv-today-card">
-      <div class="card-body">
-        <h5 class="card-title">UV-index idag</h5>
-        <p class="card-text" id="uv-today">Laddar...</p>
+      <!-- Temperature/Weather Card -->
+      <div class="col-md-6 mb-3">
+        <div class="card h-100" id="tempCard">
+          <div class="card-body">
+            <h5 class="card-title">Väder</h5>
+            <p class="card-text fs-1" id="temperature">-- °C</p>
+            <p class="card-text" id="weatherDesc">--</p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Forecast / Prognos -->
-    <h4>Prognos UV-index</h4>
-    <div class="row" id="uv-forecast">
-      <!-- Forecast cards go here -->
     </div>
 
   </div>
 
-  <script>
-    const apiKey = 'eb45ab32159d3a2bb8369a2dfc5be8bb';
-
-    function getUVClass(uv) {
-      if (uv <= 2) return 'uv-low';
-      if (uv <= 5) return 'uv-moderate';
-      return 'uv-high';
-    }
-
-    function getUVComment(uv) {
-      if (uv <= 2) return 'Låg UV-risk idag. Skydd valfritt.';
-      if (uv <= 5) return 'Moderat UV-risk. Använd solkräm SPF 30 och skydd.';
-      return 'Hög UV-risk. Använd SPF 50+, täck huden och sök skugga mitt på dagen.';
-    }
-
-    async function fetchCityData(city) {
-      try {
-        // Current weather
-        const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=sv`);
-        if (!weatherRes.ok) throw new Error('Stad inte hittad');
-        const weatherData = await weatherRes.json();
-
-        // Current UV
-        const uvRes = await fetch(`https://api.openweathermap.org/data/2.5/uvi?lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&appid=${apiKey}`);
-        const uvData = await uvRes.json();
-
-        // 7-day forecast (One Call API)
-        const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&exclude=minutely,hourly,alerts&units=metric&appid=${apiKey}&lang=sv`);
-        const forecastData = await forecastRes.json();
-
-        return { weatherData, uvData, forecastData };
-      } catch (err) {
-        alert(err.message);
-        return null;
-      }
-    }
-
-    function renderUVNow(uv) {
-      const card = document.getElementById('uv-now');
-      card.textContent = `${uv.value} (risk: ${getUVComment(uv.value)})`;
-      card.parentElement.className = `card mb-3 ${getUVClass(uv.value)}`;
-    }
-
-    function renderUVToday(uv) {
-      document.getElementById('uv-today').textContent = getUVComment(uv.value);
-    }
-
-    function renderForecast(forecast) {
-      const container = document.getElementById('uv-forecast');
-      container.innerHTML = '';
-      forecast.daily.slice(0, 5).forEach(day => {
-        const date = new Date(day.dt * 1000).toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric', month: 'numeric' });
-        const uv = day.uvi;
-        const temp = Math.round(day.temp.day);
-        const card = document.createElement('div');
-        card.className = 'col-md-2 mb-3';
-        card.innerHTML = `
-          <div class="card ${getUVClass(uv)} text-center">
-            <div class="card-body">
-              <h6>${date}</h6>
-              <p class="mb-1">UV: ${uv}</p>
-              <p>${temp}°C</p>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    document.getElementById('city-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      const city = document.getElementById('city-input').value.trim();
-      if (!city) return;
-      const data = await fetchCityData(city);
-      if (!data) return;
-      renderUVNow(data.uvData);
-      renderUVToday(data.uvData);
-      renderForecast(data.forecastData);
-    });
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

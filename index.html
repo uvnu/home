@@ -4,411 +4,223 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>UV.nu – UV-index nu</title>
+  <title>UV.nu – UV-index idag</title>
 
   <!-- SEO -->
-  <meta name="description" content="Kolla UV-index där du är. Tydliga rekommendationer för hur du skyddar dig smart mot solen i Sverige." />
-  <meta property="og:title" content="UV.nu – UV-index nu" />
+  <meta name="description" content="Kolla UV-index där du är. Skydda dig smart." />
+  <meta property="og:title" content="UV.nu – UV-index idag" />
   <meta property="og:description" content="Kolla UV-index där du är. Skydda dig smart." />
-  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#F5F7F9" />
 
-  <!-- PWA -->
-  <meta name="theme-color" content="#081326" />
-  <link rel="manifest" href="/manifest.webmanifest" />
+  <!-- Icons / PWA -->
+  <link rel="icon" href="favicon.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
 
-  <!-- iOS PWA-ish -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-  <!-- Icons -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <style>
-    :root{
-      --glass-bg: rgba(255,255,255,.72);
-      --glass-border: rgba(10, 30, 60, .10);
-      --text-dim: rgba(11, 27, 51, .70);
-      --text: #0b1b33;
-      --bg: #f3f7ff;
-      --bg2: rgba(66, 120, 255, .18);
-      --bg3: rgba(40, 200, 255, .10);
-      --warm: rgba(255, 170, 90, .16);
-      --cool: rgba(120, 180, 255, .18);
-      --mint: rgba(110, 240, 210, .14);
-    }
-
-    body{
-      min-height: 100vh;
-      color: var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background:
-        radial-gradient(1200px 720px at 18% 8%, var(--bg2), transparent 60%),
-        radial-gradient(1000px 720px at 70% 18%, var(--warm), transparent 58%),
-        radial-gradient(900px 650px at 55% 112%, var(--bg3), transparent 58%),
-        var(--bg);
-    }
-
-    .glass{
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 10px 30px rgba(10, 30, 60, .10);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: 24px;
-    }
-
-    .dim{ color: var(--text-dim); }
-
-    .brand{
-      display: flex;
-      align-items: baseline;
-      gap: .6rem;
-      flex-wrap: wrap;
-      line-height: 1.1;
-    }
-    .brand-title{
-      letter-spacing: -0.02em;
-      font-weight: 750;
-      margin: 0;
-    }
-    .brand-tagline{
-      white-space: nowrap;
-      line-height: 1.25;
-    }
-
-    .uv-big{
-      font-size: clamp(54px, 9vw, 88px);
-      line-height: 1;
-      letter-spacing: -0.03em;
-      font-weight: 750;
-    }
-
-    .pill{
-      border-radius: 999px;
-      padding: .35rem .7rem;
-      background: rgba(255,255,255,.70);
-      border: 1px solid rgba(10, 30, 60, .10);
-      font-size: .9rem;
-      white-space: nowrap;
-    }
-
-    .mini-card{ min-width: 112px; border-radius: 18px; }
-
-    .input-glass{
-      background: rgba(255,255,255,.70);
-      border: 1px solid rgba(10, 30, 60, .10);
-      color: var(--text);
-    }
-    .input-glass::placeholder{ color: rgba(11, 27, 51, .45); }
-
-    .btn-glass{
-      background: rgba(255,255,255,.70);
-      border: 1px solid rgba(10, 30, 60, .10);
-      color: var(--text);
-    }
-    .btn-glass:hover{ background: rgba(255,255,255,.85); color: var(--text); }
-
-    .error{ color: rgba(180, 40, 40, .95); }
-
-    .subtle-divider{
-      height: 1px;
-      background: rgba(255,255,255,.70);
-      border-radius: 999px;
-    }
-
-    /* Make top paddings feel tighter on desktop */
-    @media (min-width: 992px){
-      main.container{ padding-top: 2.25rem !important; }
-    }
-
-    /* Footer responsive */
-    .site-footer{
-      margin-top: 1.25rem;
-      padding: 1rem 0 0.25rem;
-    }
-    .footer-row{
-      display: flex;
-      gap: .5rem;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      font-size: .9rem;
-    }
-    .footer-center{
-      text-align: center;
-      flex: 1 1 auto;
-      min-width: 220px;
-    }
-    .footer-left, .footer-right{
-      flex: 0 0 auto;
-      min-width: 180px;
-    }
-    @media (max-width: 575.98px){
-      .footer-row{
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .footer-center{
-        text-align: left;
-        min-width: unset;
-      }
-      .footer-left, .footer-right{
-        min-width: unset;
-      }
-    }
-
-    .hint{
-      font-size: .9rem;
-      background: rgba(255,255,255,.70);
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 16px;
-      padding: .6rem .75rem;
-    }
   
+  <!-- Stil -->
+  <link rel="stylesheet" href="style.css" />
 
-    /* Yttre ram för bättre luft på desktop */
-    .outer-frame{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 14px;
-    }
-    @media (min-width: 768px){
-      .outer-frame{
-        padding: 20px;
-      }
-    }
-    @media (min-width: 992px){
-      .outer-frame{
-        background: rgba(255,255,255,.55);
-        border: 1px solid rgba(10, 30, 60, .10);
-        border-radius: 28px;
-        box-shadow: 0 14px 40px rgba(10, 30, 60, .10);
-        padding: 24px;
-      }
-    }
-
-    /* Diskreta tint-varianter (Apple Weather-känsla) */
-    .tint-cool{ background: linear-gradient(180deg, rgba(120, 180, 255, .22), rgba(255,255,255,.66)); }
-    .tint-cool2{ background: linear-gradient(180deg, rgba(110, 240, 210, .18), rgba(255,255,255,.66)); }
-    .tint-warm{ background: linear-gradient(180deg, rgba(255, 170, 90, .20), rgba(255,255,255,.66)); }
-    .tint-neutral{ background: rgba(255,255,255,.72); }
-    .tint-neutral2{ background: rgba(255,255,255,.72); }
-    .tint-hero{ background: linear-gradient(180deg, rgba(66, 120, 255, .18), rgba(255,255,255,.70)); }
-    .tint-scale{ background: rgba(255,255,255,.72); }
-
-    /* Väderikon */
-    .weather-icon{
-      font-size: 44px;
-      line-height: 1;
-      filter: drop-shadow(0 6px 14px rgba(10, 30, 60, .10));
-    }
-
-    /* UV-skala */
-    .uv-scale{
-      position: relative;
-      height: 14px;
-      border-radius: 999px;
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: repeat(13, 1fr);
-      border: 1px solid rgba(10, 30, 60, .10);
-      background: rgba(255,255,255,.60);
-    }
-    .uv-seg{ display:block; }
-    .uv-0, .uv-1, .uv-2{ background: #36c275; }      /* låg */
-    .uv-3, .uv-4, .uv-5{ background: #f2c94c; }      /* måttlig */
-    .uv-6, .uv-7{ background: #f2994a; }             /* hög */
-    .uv-8, .uv-9, .uv-10{ background: #eb5757; }     /* mycket hög */
-    .uv-11, .uv-12{ background: #9b51e0; }           /* extrem */
-    .uv-scale-marker{
-      position:absolute;
-      top:-4px;
-      width: 10px;
-      height: 22px;
-      border-radius: 999px;
-      background: rgba(11, 27, 51, .92);
-      border: 2px solid rgba(255,255,255,.9);
-      transform: translateX(-50%);
-      box-shadow: 0 6px 16px rgba(10, 30, 60, .18);
-    }
-
-    .footer-link{ color: inherit; text-decoration: underline; text-underline-offset: 3px; }
-    .footer-link:hover{ text-decoration-thickness: 2px; }
-</style>
 </head>
 
 <body>
-  <main class="container py-4 py-md-5">
+  <main class="frame">
 
-    <div class="outer-frame">
-
-    <!-- Header (compact) -->
-    <div class="d-flex align-items-start justify-content-between gap-3 mb-2">
-      <div class="pe-2">
-        <div class="brand">
-          <div class="h4 brand-title">UV.nu</div>
-          <div class="small dim brand-tagline">Kolla UV-index där du är. Skydda dig smart.</div>
-        </div>
+    <!-- =========================================
+         Topbar / navbar (minimal)
+         ========================================= -->
+    <header class="nav-clean d-flex align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="brand">UV.nu</div>
+        <div class="tagline d-none d-md-block">Kolla UV-index där du är. Skydda dig smart.</div>
       </div>
 
-      <div class="d-flex gap-2 align-items-start">
-        <div class="d-none d-md-block" style="width: 320px;">
-          <input id="cityInput" class="form-control input-glass" placeholder="Byt plats (t.ex. Uppsala)" />
-        </div>
+      <nav class="d-flex align-items-center gap-3">
+        <a class="text-decoration-none" href="#kallor">Väderdata</a>
+        <a class="text-decoration-none" href="#kontakt" data-bs-toggle="modal" data-bs-target="#kontaktModal">Kontakta oss</a>
+      </nav>
+    </header>
 
-        <div class="d-flex flex-column gap-2">
-          <button id="useMyLocationBtn" class="btn btn-glass" type="button">Min plats</button>
-          <button id="installBtn" class="btn btn-glass" type="button" style="display:none;">Installera</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Location row (same level feel) -->
-    <div class="d-flex align-items-end justify-content-between gap-3 mb-3">
-      <div>
-        <div class="h5 mb-1" id="locationName">Hämtar plats…</div>
-        <div class="small dim" id="updatedAt">—</div>
-      </div>
-
-      <div class="d-none d-md-block small dim">Tryck Enter för att söka</div>
-    </div>
-
-    <!-- Mobile search -->
-    <div class="d-md-none mb-3">
-      <input id="cityInputMobile" class="form-control input-glass" placeholder="Byt plats (t.ex. Uppsala)" />
-      <div class="small dim mt-2">Tips: skriv en stad och tryck Enter</div>
-    </div>
-
-    <div id="installHint" class="hint dim mb-3" style="display:none;"></div>
-    <div id="status" class="small dim mb-3"></div>
-
-    
-    <!-- Väderöversikt (bred ruta) -->
-    <section class="glass tint-hero p-4 p-md-5 mb-3">
-      <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+    <!-- =========================================
+         Hero: UV-index idag
+         ========================================= -->
+    <section class="card-clean mt-4 p-4 p-md-5">
+      <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
         <div>
-          <div class="small dim mb-2">Väder nu</div>
-          <div class="d-flex align-items-end gap-3 flex-wrap">
-            <div class="display-5 fw-semibold mb-0" id="weatherTemp">—</div>
-            <div class="h5 mb-1 dim" id="weatherSummary">—</div>
+          <h1 class="hero-title">UV-index idag – <span id="locationName">Stockholm</span> <span class="ms-1" aria-hidden="true">📍</span></h1>
+          <div class="hero-sub">Uppdaterad <span id="updatedAt">--:--</span></div>
+        </div>
+
+        <!-- Sök + "min plats" (diskret, men alltid tillgängligt) -->
+        <div class="d-flex gap-2 align-items-center">
+          <input id="cityInput" class="form-control form-control-sm" style="min-width: 180px;" placeholder="Sök stad…" autocomplete="off" />
+          <button id="useMyLocationBtn" class="btn btn-outline-secondary btn-sm" type="button">Min plats</button>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <div id="uvNow" class="uv-number">--</div>
+        <div id="uvLevel" class="uv-level">--</div>
+
+        <div class="mx-auto" style="max-width: 640px;">
+          <div class="uv-track">
+            <div id="uvMarker" class="uv-marker" style="left: 0%;"></div>
           </div>
-          <div class="small dim mt-2" id="weatherDetails">—</div>
-        </div>
-
-        <div class="text-end ms-auto">
-          <div class="weather-icon" id="weatherIcon" aria-hidden="true">—</div>
-          <div class="small dim mt-1" id="weatherFeels">—</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- UV-skala + förklaring -->
-    <section class="glass tint-scale p-4 mb-3">
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <div class="small dim">UV-skala</div>
-        <div class="small dim">0–11+</div>
-      </div>
-
-      <div class="uv-scale" aria-hidden="true">
-        <span class="uv-seg uv-0"></span>
-        <span class="uv-seg uv-1"></span>
-        <span class="uv-seg uv-2"></span>
-        <span class="uv-seg uv-3"></span>
-        <span class="uv-seg uv-4"></span>
-        <span class="uv-seg uv-5"></span>
-        <span class="uv-seg uv-6"></span>
-        <span class="uv-seg uv-7"></span>
-        <span class="uv-seg uv-8"></span>
-        <span class="uv-seg uv-9"></span>
-        <span class="uv-seg uv-10"></span>
-        <span class="uv-seg uv-11"></span>
-        <span class="uv-seg uv-12"></span>
-        <div class="uv-scale-marker" id="uvScaleMarker" style="left:0%"></div>
-      </div>
-
-      <div class="small dim mt-2" id="uvScaleLabel">—</div>
-
-      <div class="scale-explain small dim mt-3">
-        <div><strong>Låg (0–2)</strong>: normalt skydd räcker ofta.</div>
-        <div><strong>Måttlig (3–5)</strong>: solskydd, skugga mitt på dagen.</div>
-        <div><strong>Hög (6–7)</strong>: extra skydd, undvik stark sol.</div>
-        <div><strong>Mycket hög (8–10)</strong>: minimera solexponering.</div>
-        <div><strong>Extrem (11+)</strong>: stanna i skugga, fullt skydd.</div>
-      </div>
-    </section>
-
-
-    <!-- Top row: two cards -->
-    <div class="row g-3 mb-3">
-      <div class="col-12 col-lg-8">
-        <section class="glass tint-cool p-4 p-md-5 h-100">
-          <div class="small dim mb-2">UV-index nu</div>
-          <div class="uv-big" id="uvNow">—</div>
-          <div class="mt-2 d-flex gap-2 flex-wrap">
-            <span class="pill" id="uvLevel">—</span>
-            <span class="pill dim" id="uvHint">—</span>
+          <div class="d-flex justify-content-between mt-2 small text-muted px-1">
+            <span>Låg</span><span>3–5</span><span>Måttlig</span><span>Hög</span><span>Mycket hög</span>
           </div>
-        </section>
-      </div>
-
-      <div class="col-12 col-lg-4">
-        <section class="glass tint-warm p-4 p-md-5 h-100">
-          <div class="small dim mb-2">Topp idag</div>
-          <div class="display-5 fw-semibold mb-1" id="uvMax">—</div>
-          <div class="dim mb-3" id="uvMaxTime">—</div>
-          <div class="small dim" id="uvMaxBand"></div>
-        </section>
-      </div>
-    </div>
-
-    <!-- Middle row -->
-    <div class="row g-3 mb-3">
-      <div class="col-12 col-md-6">
-        <div class="glass tint-cool2 p-4 h-100">
-          <div class="small dim mb-2">UV-index idag</div>
-          <div class="h5 mb-2" id="todayNarrativeTitle">—</div>
-          <div class="dim" id="todayNarrativeBody">—</div>
         </div>
       </div>
 
-      <div class="col-12 col-md-6">
-        <div class="glass tint-neutral p-4 h-100">
-          <div class="small dim mb-2">Rekommendation</div>
-          <ul class="mb-0 dim" id="recList" style="padding-left: 1.1rem;">
-            <li>—</li>
-          </ul>
+      <div class="hero-meta mt-4">
+        <div class="row g-2">
+          <div class="col-md-6">
+            <div><span class="label">Topp idag:</span> <span id="uvMax">--</span> <span class="label">kl</span> <span id="uvMaxTime">--:--</span></div>
+          </div>
+          <div class="col-md-6">
+            <div><span class="label">Rekommendation:</span> <span id="uvAdvice">--</span></div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Forecast -->
-    <section class="glass tint-neutral2 p-3 p-md-4">
-      <div class="d-flex align-items-center justify-content-between mb-1">
-        <div class="small dim">Prognos</div>
-        <div class="small dim" id="forecastModeLabel">Kommande timmar</div>
-      </div>
-
-      <div class="small dim mb-2" id="forecastSummary"></div>
-      <div id="forecastStrip" class="d-flex gap-2 overflow-auto pb-1"></div>
     </section>
 
-    <div id="error" class="mt-3 small error"></div>
+    <!-- =========================================
+         Väder + UV-prognos (samma bredd som hero)
+         - Desktop: två kolumner
+         - Mobil: staplas
+         ========================================= -->
+    <section class="row g-3 mt-3">
+      <div class="col-md-6">
+        <div class="card-clean p-4">
+          <div class="d-flex align-items-baseline justify-content-between">
+            <h2 class="h5 mb-0">Väder</h2>
+            <div class="text-muted small" id="weatherNote"></div>
+          </div>
 
-    <!-- Footer -->
-    <footer class="site-footer">
-      <div class="subtle-divider mb-3"></div>
-      <div class="footer-row dim">
-        <div class="footer-left">Källa: <a class="footer-link" href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></div>
-        <div class="footer-center">© 2026 uv.nu. Alla rättigheter förbehållna.</div>
-        <div class="footer-right">UV-index kan variera lokalt</div>
+          <div class="mini-kpi mt-3">
+            <div>
+              <div class="value"><span id="tempNow">--</span>°</div>
+              <div class="sub">Temperatur</div>
+            </div>
+            <div>
+              <div class="value" style="font-size: 26px;"><span id="cloudNow">--</span>%</div>
+              <div class="sub">Molnighet</div>
+            </div>
+            <div>
+              <div class="value" style="font-size: 26px;"><span id="windNow">--</span> m/s</div>
+              <div class="sub">Vind</div>
+            </div>
+          </div>
+
+          <div class="mt-3 text-muted">
+            <span class="small">Känns som <strong id="feelsLike">--</strong>°</span>
+          </div>
+        </div>
       </div>
+
+      <div class="col-md-6">
+        <div class="card-clean p-4">
+          <div class="d-flex align-items-baseline justify-content-between">
+            <h2 class="h5 mb-0">UV-prognos</h2>
+            <div class="text-muted small">Idag</div>
+          </div>
+
+          <div class="spark-wrap mt-2">
+            <!-- SVG ritas av app.js -->
+            <svg id="uvSpark" class="spark" viewBox="0 0 420 120" preserveAspectRatio="none" aria-label="UV-prognos"></svg>
+          </div>
+
+          <div class="d-flex justify-content-between text-muted small mt-2 px-1" id="uvTicks">
+            <!-- Tick-etiketter sätts av app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         UV-skala + förklaring (statisk)
+         ========================================= -->
+    <section class="card-clean mt-3 p-4">
+      <h2 class="h5 mb-3">UV-index och skydd</h2>
+
+      <div class="scale-row">
+        <div class="scale-cell scale-low">0–2</div>
+        <div class="scale-cell scale-mod">3–5</div>
+        <div class="scale-cell scale-high">6–7</div>
+        <div class="scale-cell scale-vhigh">8–10</div>
+        <div class="scale-cell scale-ext">11+</div>
+      </div>
+      <div class="scale-caption">
+        <div>Låg</div><div>Måttlig</div><div>Hög</div><div>Mycket hög</div><div>Extrem</div>
+      </div>
+
+      <p class="text-muted mt-3 mb-0">
+        UV-index visar styrkan i solens ultravioletta strålning. Låga nivåer kräver oftast inget särskilt skydd, medan
+        högre nivåer innebär att du behöver skydda hud och ögon – särskilt mitt på dagen.
+      </p>
+    </section>
+
+    <!-- =========================================
+         Footer
+         ========================================= -->
+    <footer class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3" id="kallor">
+      <div>© <span id="yearNow"></span> UV.nu.</div>
+      <div>Väderdata från <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open‑Meteo</a> →</div>
     </footer>
-    </div>
+
   </main>
 
-  <script src="./app.js"></script>
+  <!-- =========================================
+       Kontaktmodal (enkelt placeholder, ingen e-post visas)
+       OBS: GitHub Pages är statisk — formulär kräver backend (t.ex. Formspree).
+       ========================================= -->
+  <div class="modal fade" id="kontaktModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content card-clean">
+        <div class="modal-header">
+          <h3 class="modal-title h5 mb-0" id="kontaktTitle">Kontakta oss</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small">
+            Skicka ett meddelande. E‑post är valfritt (om du vill ha svar).
+          </p>
+
+          <!-- Byt action till din formulärtjänst (t.ex. Formspree). -->
+          <form id="kontaktForm" action="https://formspree.io/f/mlgwzpaa" method="POST">
+            <div class="mb-3">
+              <label class="form-label">E‑post (valfritt)</label>
+              <input class="form-control" type="email" name="email" placeholder="namn@example.com" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Meddelande (obligatoriskt)</label>
+              <textarea class="form-control" name="message" rows="4" required placeholder="Skriv ditt meddelande…"></textarea>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="text-muted small" id="kontaktStatus"></div>
+              <button class="btn btn-dark" type="submit">Skicka</button>
+            </div>
+          </form>
+
+          <div class="alert alert-success mt-3 d-none" id="kontaktSuccess" role="alert">
+            Tack! Ditt meddelande är skickat.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossorigin="anonymous"></script>
+
+  <!-- App -->
+  <script src="app.js"></script>
 </body>
 </html>

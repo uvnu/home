@@ -15,6 +15,13 @@ const el = {
   locationName: document.getElementById("locationName"),
   updatedAt: document.getElementById("updatedAt"),
   status: document.getElementById("status"),
+  weatherTemp: document.getElementById("weatherTemp"),
+  weatherSummary: document.getElementById("weatherSummary"),
+  weatherDetails: document.getElementById("weatherDetails"),
+  weatherIcon: document.getElementById("weatherIcon"),
+  weatherFeels: document.getElementById("weatherFeels"),
+  uvScaleMarker: document.getElementById("uvScaleMarker"),
+  uvScaleLabel: document.getElementById("uvScaleLabel"),
   error: document.getElementById("error"),
 
   uvNow: document.getElementById("uvNow"),
@@ -175,6 +182,94 @@ async function openMeteoUV(lat, lon) {
     `&timezone=auto` +
     `&forecast_days=5`;
   return fetchJSON(url);
+}
+
+
+async function openMeteoWeather(lat, lon) {
+  // Hämtar grundläggande väderdata utan API-nyckel
+  const url =
+    `https://api.open-meteo.com/v1/forecast` +
+    `?latitude=${lat}&longitude=${lon}` +
+    `&current=temperature_2m,apparent_temperature,weathercode,wind_speed_10m,relative_humidity_2m` +
+    `&timezone=auto`;
+  return fetchJSON(url);
+}
+
+function weatherCodeToText(code) {
+  // Open-Meteo Weathercode: https://open-meteo.com/en/docs
+  const m = {
+    0: "Klart",
+    1: "Mest klart",
+    2: "Delvis molnigt",
+    3: "Mulet",
+    45: "Dimma",
+    48: "Rimfrost-dimma",
+    51: "Duggregn (lätt)",
+    53: "Duggregn",
+    55: "Duggregn (kraftigt)",
+    56: "Underkylt duggregn (lätt)",
+    57: "Underkylt duggregn",
+    61: "Regn (lätt)",
+    63: "Regn",
+    65: "Regn (kraftigt)",
+    66: "Underkylt regn (lätt)",
+    67: "Underkylt regn",
+    71: "Snö (lätt)",
+    73: "Snö",
+    75: "Snö (kraftigt)",
+    77: "Kornsnö",
+    80: "Regnskurar (lätta)",
+    81: "Regnskurar",
+    82: "Regnskurar (kraftiga)",
+    85: "Snöskurar (lätta)",
+    86: "Snöskurar",
+    95: "Åska",
+    96: "Åska med hagel (lätt)",
+    99: "Åska med hagel",
+  };
+  return m[code] ?? "Väder";
+}
+
+function weatherCodeToEmoji(code) {
+  // En enkel ikon-karta som funkar överallt (utan extra bilder)
+  if (code === 0) return "☀️";
+  if (code === 1) return "🌤️";
+  if (code === 2) return "⛅";
+  if (code === 3) return "☁️";
+  if (code === 45 || code === 48) return "🌫️";
+  if ([51,53,55,56,57].includes(code)) return "🌦️";
+  if ([61,63,65,66,67,80,81,82].includes(code)) return "🌧️";
+  if ([71,73,75,77,85,86].includes(code)) return "🌨️";
+  if ([95,96,99].includes(code)) return "⛈️";
+  return "🌡️";
+}
+
+function renderWeather(weatherData) {
+  if (!weatherData || !weatherData.current) return;
+
+  const c = weatherData.current;
+
+  const temp = typeof c.temperature_2m === "number" ? Math.round(c.temperature_2m) : null;
+  const feels = typeof c.apparent_temperature === "number" ? Math.round(c.apparent_temperature) : null;
+  const wind = typeof c.wind_speed_10m === "number" ? Math.round(c.wind_speed_10m) : null;
+  const rh = typeof c.relative_humidity_2m === "number" ? Math.round(c.relative_humidity_2m) : null;
+  const code = c.weathercode;
+
+  const text = weatherCodeToText(code);
+  const emoji = weatherCodeToEmoji(code);
+
+  if (el.weatherTemp) el.weatherTemp.textContent = temp !== null ? `${temp}°` : "—";
+  if (el.weatherSummary) el.weatherSummary.textContent = text;
+  if (el.weatherIcon) el.weatherIcon.textContent = emoji;
+
+  const details = [];
+  if (wind !== null) details.push(`Vind ${wind} m/s`);
+  if (rh !== null) details.push(`Luftfuktighet ${rh}%`);
+  if (el.weatherDetails) el.weatherDetails.textContent = details.length ? details.join(" • ") : "—";
+
+  if (el.weatherFeels) {
+    el.weatherFeels.textContent = feels !== null ? `Känns som ${feels}°` : "";
+  }
 }
 
 // ---------- Forecast rendering ----------
@@ -343,11 +438,16 @@ function renderUV(data) {
 // ---------- Refresh ----------
 async function setLocationAndRefresh(loc) {
   setError("");
-  setStatus("Hämtar UV-data…");
+  setStatus("Hämtar UV- och väderdata…");
   renderLocation(loc);
 
-  const data = await openMeteoUV(loc.lat, loc.lon);
-  renderUV(data);
+  const [uvData, weatherData] = await Promise.all([
+    openMeteoUV(loc.lat, loc.lon),
+    openMeteoWeather(loc.lat, loc.lon),
+  ]);
+
+  renderWeather(weatherData);
+  renderUV(uvData);
 
   setStatus("");
 }

@@ -24,7 +24,7 @@ const el = {
   uvMarker: document.getElementById("uvMarker"),
   uvMax: document.getElementById("uvMax"),
   uvMaxTime: document.getElementById("uvMaxTime"),
-  uvAdvice: document.getElementById("uvAdvice"),
+  uvAdviceList: document.getElementById("uvAdviceList"),
 
   // Sök / plats
   cityInput: document.getElementById("cityInput"),
@@ -79,14 +79,32 @@ function uvKategori(uv) {
   return { namn: "Extrem", accent: "var(--uv-purple)" };
 }
 
-function uvRekommendation(uv) {
-  if (uv < 3) return "Inget särskilt skydd krävs för de flesta.";
-  if (uv < 6) return "Solskydd rekommenderas mitt på dagen.";
-  if (uv < 8) return "Sök skugga mitt på dagen och använd solskydd.";
-  if (uv < 11) return "Undvik stark sol mitt på dagen. Skydda hud och ögon.";
-  return "Undvik solen. Extra skydd behövs.";
-}
+function uvRekommendationer(uv) {
+  // Returnerar flera korta råd så att sidan känns mer hjälpsam utan att bli "plottrig"
+  const råd = [];
 
+  if (uv < 3) {
+    råd.push("Inget särskilt skydd krävs för de flesta vid kortare vistelse.");
+    råd.push("Använd solglasögon vid starkt ljus och var extra uppmärksam vid vatten/snö.");
+  } else if (uv < 6) {
+    råd.push("Solskydd rekommenderas mitt på dagen (SPF 30+).");
+    råd.push("Solglasögon och hatt minskar risken för ögon- och hudskador.");
+  } else if (uv < 8) {
+    råd.push("Sök skugga mitt på dagen och använd solskydd (SPF 30–50).");
+    råd.push("Täckande kläder och solglasögon ger extra skydd.");
+  } else if (uv < 11) {
+    råd.push("Undvik stark sol mitt på dagen. Skydda hud och ögon noggrant.");
+    råd.push("Planera utomhusaktiviteter till morgon/kväll om möjligt.");
+  } else {
+    råd.push("Undvik solen. Extra skydd behövs även i skugga.");
+    råd.push("Täckande kläder, hatt och solglasögon rekommenderas starkt.");
+  }
+
+  // Barn-råd (alltid med som tredje punkt)
+  råd.push("Barn: Välj skugga och täckande kläder. Solkräm på hud som inte kan täckas.");
+
+  return råd.slice(0, 3);
+}
 // =========
 // Open‑Meteo: Geocoding (sök + reverse)
 // =========
@@ -175,7 +193,16 @@ function renderHero({ uvNow, uvMax, uvMaxTime }) {
   el.uvMax.textContent = Number.isFinite(uvMax) ? String(Math.round(uvMax * 10) / 10) : "--";
   el.uvMaxTime.textContent = uvMaxTime || "--:--";
 
-  el.uvAdvice.textContent = uvRekommendation(uvR);
+  // Sätt flera rekommendationer
+  if (el.uvAdviceList) {
+    const råd = uvRekommendationer(uvR);
+    el.uvAdviceList.innerHTML = "";
+    råd.forEach((text) => {
+      const li = document.createElement("li");
+      li.textContent = text;
+      el.uvAdviceList.appendChild(li);
+    });
+  }
 }
 
 // =========
@@ -277,9 +304,11 @@ function renderUvSpark(points) {
   // Rensa
   svg.innerHTML = "";
 
-  const W = 420;
+  const W = 460;
   const H = 120;
-  const padX = 14;
+  // Marginaler: vänster större för Y-axelns siffror
+  const padL = 40;
+  const padR = 14;
   const padY = 14;
 
   // Skala
@@ -292,8 +321,8 @@ function renderUvSpark(points) {
   const minY = 0;
 
   function xScale(h) {
-    if (maxX === minX) return W / 2;
-    return padX + ((h - minX) / (maxX - minX)) * (W - padX * 2);
+    if (maxX === minX) return (padL + (W - padR)) / 2;
+    return padL + ((h - minX) / (maxX - minX)) * (W - padL - padR);
   }
   function yScale(v) {
     const vv = clamp(v, minY, 12);
@@ -305,13 +334,37 @@ function renderUvSpark(points) {
   for (let i = 0; i < 4; i++) {
     const y = padY + (i / 3) * (H - padY * 2);
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", "0");
-    line.setAttribute("x2", String(W));
+    line.setAttribute("x1", String(padL));
+    line.setAttribute("x2", String(W - padR));
     line.setAttribute("y1", String(y));
     line.setAttribute("y2", String(y));
     line.setAttribute("class", "spark-grid");
     svg.appendChild(line);
   }
+
+  // Y-axel: siffror (0–11) för att göra grafen mer lättläst
+  const yEtiketter = [0, 2, 4, 6, 8, 10, 11];
+  yEtiketter.forEach((val) => {
+    // Hoppa över etiketter som ligger ovanför maxY (utom 0)
+    if (val !== 0 && val > maxY + 0.1) return;
+
+    const y = yScale(val);
+    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    t.setAttribute("x", "6");
+    t.setAttribute("y", String(y + 4)); // optisk centrering
+    t.setAttribute("class", "spark-ylabel");
+    t.textContent = String(val);
+    svg.appendChild(t);
+  });
+
+  // Subtil Y-axellinje
+  const axis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  axis.setAttribute("x1", String(padL));
+  axis.setAttribute("x2", String(padL));
+  axis.setAttribute("y1", String(padY));
+  axis.setAttribute("y2", String(H - padY));
+  axis.setAttribute("class", "spark-axis");
+  svg.appendChild(axis);
 
   // Path
   let d = "";

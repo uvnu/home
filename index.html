@@ -40,7 +40,6 @@
       </div>
 
       <nav class="d-flex align-items-center gap-3">
-        <a class="text-decoration-none" href="#kallor">Källor</a>
         <a class="text-decoration-none" href="#kontakt" data-bs-toggle="modal" data-bs-target="#kontaktModal">Kontakta oss</a>
       </nav>
     </header>
@@ -77,10 +76,11 @@
       </div>
 
       <div class="hero-meta mt-4">
-        <div class="row g-2">
-          <div class="col-md-6">
-            <div><span class="label">Topp idag:</span> <span id="uvMax">--</span> <span class="label">kl</span> <span id="uvMaxTime">--:--</span></div>
-          </div>
+        <div><span class="label">Topp idag:</span> <span id="uvMax">--</span> <span class="label">kl</span> <span id="uvMaxTime">--:--</span></div>
+
+        <div class="mt-3"><span class="label">Rekommendationer:</span></div>
+        <ul id="uvAdviceList" class="advice-list mb-0 mt-2" aria-live="polite"></ul>
+      </div>
           <div class="col-md-6">
             <div><span class="label">Rekommendationer:</span></div>
             <ul id="uvAdviceList" class="advice-list mb-0" aria-live="polite"></ul>
@@ -105,7 +105,7 @@
           <div class="mini-kpi mt-3">
             <div>
               <div class="value"><span id="tempNow">--</span>°</div>
-              <div class="sub">Temperatur</div>
+              <div class="sub">Temperatur nu</div>
             </div>
             <div>
               <div class="value" style="font-size: 26px;"><span id="cloudNow">--</span>%</div>
@@ -117,8 +117,10 @@
             </div>
           </div>
 
-          <div class="mt-3 text-muted">
+          <div class="mt-3 text-muted d-flex flex-wrap gap-2 align-items-center">
             <span class="small">Känns som <strong id="feelsLike">--</strong>°</span>
+            <span class="small">•</span>
+            <span class="small">Min/Max idag <strong><span id="tempMin">--</span>°</strong>/<strong><span id="tempMax">--</span>°</strong></span>
           </div>
         </div>
       </div>
@@ -173,7 +175,7 @@
     <!-- =========================================
          Footer
          ========================================= -->
-    <footer class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3" id="kallor">
+    <footer class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3" >
       <div>© <span id="yearNow"></span> UV.nu.</div>
       <div>Väderdata från <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open‑Meteo</a></div>
     </footer>

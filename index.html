@@ -40,7 +40,7 @@
       </div>
 
       <nav class="d-flex align-items-center gap-3">
-        <a class="text-decoration-none" href="#kallor">Väderdata</a>
+        <a class="text-decoration-none" href="#kallor">Källor</a>
         <a class="text-decoration-none" href="#kontakt" data-bs-toggle="modal" data-bs-target="#kontaktModal">Kontakta oss</a>
       </nav>
     </header>
@@ -82,7 +82,8 @@
             <div><span class="label">Topp idag:</span> <span id="uvMax">--</span> <span class="label">kl</span> <span id="uvMaxTime">--:--</span></div>
           </div>
           <div class="col-md-6">
-            <div><span class="label">Rekommendation:</span> <span id="uvAdvice">--</span></div>
+            <div><span class="label">Rekommendationer:</span></div>
+            <ul id="uvAdviceList" class="advice-list mb-0" aria-live="polite"></ul>
           </div>
         </div>
       </div>
@@ -131,7 +132,7 @@
 
           <div class="spark-wrap mt-2">
             <!-- SVG ritas av app.js -->
-            <svg id="uvSpark" class="spark" viewBox="0 0 420 120" preserveAspectRatio="none" aria-label="UV-prognos"></svg>
+            <svg id="uvSpark" class="spark" viewBox="0 0 460 120" preserveAspectRatio="none" aria-label="UV-prognos"></svg>
           </div>
 
           <div class="d-flex justify-content-between text-muted small mt-2 px-1" id="uvTicks">
@@ -162,6 +163,11 @@
         UV-index visar styrkan i solens ultravioletta strålning. Låga nivåer kräver oftast inget särskilt skydd, medan
         högre nivåer innebär att du behöver skydda hud och ögon – särskilt mitt på dagen.
       </p>
+
+      <p class="text-muted mt-2 mb-0">
+        Barns hud och ögon är extra känsliga för UV-strålning. För små barn är skugga och täckande kläder oftast bästa skyddet.
+        Komplettera med solhatt och solglasögon, och använd solkräm på hud som inte kan täckas.
+      </p>
     </section>
 
     <!-- =========================================
@@ -169,7 +175,7 @@
          ========================================= -->
     <footer class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3" id="kallor">
       <div>© <span id="yearNow"></span> UV.nu.</div>
-      <div>Väderdata från <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open‑Meteo</a> →</div>
+      <div>Väderdata från <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open‑Meteo</a></div>
     </footer>
 
   </main>

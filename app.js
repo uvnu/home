@@ -35,6 +35,8 @@ const el = {
   feelsLike: document.getElementById("feelsLike"),
   cloudNow: document.getElementById("cloudNow"),
   windNow: document.getElementById("windNow"),
+  tempMin: document.getElementById("tempMin"),
+  tempMax: document.getElementById("tempMax"),
   weatherNote: document.getElementById("weatherNote"),
 
   // Prognos
@@ -167,7 +169,7 @@ async function hamtaData(lat, lon) {
 
   // UV timvis + max per dag
   url.searchParams.set("hourly", "uv_index");
-  url.searchParams.set("daily", "uv_index_max");
+  url.searchParams.set("daily", "uv_index_max,temperature_2m_min,temperature_2m_max");
 
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error("Kunde inte hämta data från Open‑Meteo");
@@ -206,18 +208,26 @@ function renderHero({ uvNow, uvMax, uvMaxTime }) {
 }
 
 // =========
-// Render: Väder (inkl. "Känns som")
+// Render: Väder (nu) (inkl. "Känns som" + min/max)
 // =========
-function renderWeather(current) {
+function renderWeather(current, daily) {
   const t = current?.temperature_2m;
   const feels = current?.apparent_temperature;
   const cloud = current?.cloud_cover;
   const wind = current?.wind_speed_10m;
 
+  // Dagens min/max (temperatur) från daily-serien
+  const tMin = Array.isArray(daily?.temperature_2m_min) ? daily.temperature_2m_min[0] : NaN;
+  const tMax = Array.isArray(daily?.temperature_2m_max) ? daily.temperature_2m_max[0] : NaN;
+
   el.tempNow.textContent = Number.isFinite(t) ? Math.round(t) : "--";
   el.feelsLike.textContent = Number.isFinite(feels) ? Math.round(feels) : "--";
   el.cloudNow.textContent = Number.isFinite(cloud) ? Math.round(cloud) : "--";
   el.windNow.textContent = Number.isFinite(wind) ? Math.round(wind * 10) / 10 : "--";
+
+  // Visa min/max om vi har värden
+  if (el.tempMin) el.tempMin.textContent = Number.isFinite(tMin) ? Math.round(tMin) : "--";
+  if (el.tempMax) el.tempMax.textContent = Number.isFinite(tMax) ? Math.round(tMax) : "--";
 
   // Diskret notis (t.ex. "Nu")
   el.weatherNote.textContent = "Nu";
@@ -420,7 +430,7 @@ async function uppdatera() {
   const data = await hamtaData(currentLocation.lat, currentLocation.lon);
 
   // Väder
-  renderWeather(data.current);
+  renderWeather(data.current, data.daily);
 
   // UV
   const uvInfo = analyseraUV(data.hourly, data.timezone);

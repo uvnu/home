@@ -28,18 +28,21 @@
 
   <style>
     :root{
-      --glass-bg: rgba(255,255,255,.10);
-      --glass-border: rgba(255,255,255,.18);
-      --text-dim: rgba(255,255,255,.72);
-      --bg: #081326;
-      --bg2: rgba(66, 120, 255, .28);
-      --bg3: rgba(40, 200, 255, .16);
+      --glass-bg: rgba(255,255,255,.72);
+      --glass-border: rgba(10, 30, 60, .10);
+      --text-dim: rgba(11, 27, 51, .70);
+      --text: #0b1b33;
+      --bg: #f3f7ff;
+      --bg2: rgba(66, 120, 255, .18);
+      --bg3: rgba(40, 200, 255, .10);
       --warm: rgba(255, 170, 90, .16);
+      --cool: rgba(120, 180, 255, .18);
+      --mint: rgba(110, 240, 210, .14);
     }
 
     body{
       min-height: 100vh;
-      color: #fff;
+      color: var(--text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       background:
         radial-gradient(1200px 720px at 18% 8%, var(--bg2), transparent 60%),
@@ -51,7 +54,7 @@
     .glass{
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      box-shadow: 0 10px 30px rgba(10, 30, 60, .10);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border-radius: 24px;
@@ -86,8 +89,8 @@
     .pill{
       border-radius: 999px;
       padding: .35rem .7rem;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.70);
+      border: 1px solid rgba(10, 30, 60, .10);
       font-size: .9rem;
       white-space: nowrap;
     }
@@ -95,24 +98,24 @@
     .mini-card{ min-width: 112px; border-radius: 18px; }
 
     .input-glass{
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-      color:#fff;
+      background: rgba(255,255,255,.70);
+      border: 1px solid rgba(10, 30, 60, .10);
+      color: var(--text);
     }
-    .input-glass::placeholder{ color: rgba(255,255,255,.55); }
+    .input-glass::placeholder{ color: rgba(11, 27, 51, .45); }
 
     .btn-glass{
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.18);
-      color:#fff;
+      background: rgba(255,255,255,.70);
+      border: 1px solid rgba(10, 30, 60, .10);
+      color: var(--text);
     }
-    .btn-glass:hover{ background: rgba(255,255,255,.16); color:#fff; }
+    .btn-glass:hover{ background: rgba(255,255,255,.85); color: var(--text); }
 
-    .error{ color: rgba(255,180,180,.95); }
+    .error{ color: rgba(180, 40, 40, .95); }
 
     .subtle-divider{
       height: 1px;
-      background: rgba(255,255,255,.10);
+      background: rgba(255,255,255,.70);
       border-radius: 999px;
     }
 
@@ -159,16 +162,88 @@
 
     .hint{
       font-size: .9rem;
-      background: rgba(255,255,255,.10);
+      background: rgba(255,255,255,.70);
       border: 1px solid rgba(255,255,255,.16);
       border-radius: 16px;
       padding: .6rem .75rem;
     }
-  </style>
+  
+
+    /* Yttre ram för bättre luft på desktop */
+    .outer-frame{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+    @media (min-width: 768px){
+      .outer-frame{
+        padding: 20px;
+      }
+    }
+    @media (min-width: 992px){
+      .outer-frame{
+        background: rgba(255,255,255,.55);
+        border: 1px solid rgba(10, 30, 60, .10);
+        border-radius: 28px;
+        box-shadow: 0 14px 40px rgba(10, 30, 60, .10);
+        padding: 24px;
+      }
+    }
+
+    /* Diskreta tint-varianter (Apple Weather-känsla) */
+    .tint-cool{ background: linear-gradient(180deg, rgba(120, 180, 255, .22), rgba(255,255,255,.66)); }
+    .tint-cool2{ background: linear-gradient(180deg, rgba(110, 240, 210, .18), rgba(255,255,255,.66)); }
+    .tint-warm{ background: linear-gradient(180deg, rgba(255, 170, 90, .20), rgba(255,255,255,.66)); }
+    .tint-neutral{ background: rgba(255,255,255,.72); }
+    .tint-neutral2{ background: rgba(255,255,255,.72); }
+    .tint-hero{ background: linear-gradient(180deg, rgba(66, 120, 255, .18), rgba(255,255,255,.70)); }
+    .tint-scale{ background: rgba(255,255,255,.72); }
+
+    /* Väderikon */
+    .weather-icon{
+      font-size: 44px;
+      line-height: 1;
+      filter: drop-shadow(0 6px 14px rgba(10, 30, 60, .10));
+    }
+
+    /* UV-skala */
+    .uv-scale{
+      position: relative;
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      border: 1px solid rgba(10, 30, 60, .10);
+      background: rgba(255,255,255,.60);
+    }
+    .uv-seg{ display:block; }
+    .uv-0, .uv-1, .uv-2{ background: #36c275; }      /* låg */
+    .uv-3, .uv-4, .uv-5{ background: #f2c94c; }      /* måttlig */
+    .uv-6, .uv-7{ background: #f2994a; }             /* hög */
+    .uv-8, .uv-9, .uv-10{ background: #eb5757; }     /* mycket hög */
+    .uv-11, .uv-12{ background: #9b51e0; }           /* extrem */
+    .uv-scale-marker{
+      position:absolute;
+      top:-4px;
+      width: 10px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(11, 27, 51, .92);
+      border: 2px solid rgba(255,255,255,.9);
+      transform: translateX(-50%);
+      box-shadow: 0 6px 16px rgba(10, 30, 60, .18);
+    }
+
+    .footer-link{ color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+    .footer-link:hover{ text-decoration-thickness: 2px; }
+</style>
 </head>
 
 <body>
-  <main class="container py-4 py-md-5" style="max-width: 980px;">
+  <main class="container py-4 py-md-5">
+
+    <div class="outer-frame">
 
     <!-- Header (compact) -->
     <div class="d-flex align-items-start justify-content-between gap-3 mb-2">
@@ -210,10 +285,66 @@
     <div id="installHint" class="hint dim mb-3" style="display:none;"></div>
     <div id="status" class="small dim mb-3"></div>
 
+    
+    <!-- Väderöversikt (bred ruta) -->
+    <section class="glass tint-hero p-4 p-md-5 mb-3">
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+        <div>
+          <div class="small dim mb-2">Väder nu</div>
+          <div class="d-flex align-items-end gap-3 flex-wrap">
+            <div class="display-5 fw-semibold mb-0" id="weatherTemp">—</div>
+            <div class="h5 mb-1 dim" id="weatherSummary">—</div>
+          </div>
+          <div class="small dim mt-2" id="weatherDetails">—</div>
+        </div>
+
+        <div class="text-end ms-auto">
+          <div class="weather-icon" id="weatherIcon" aria-hidden="true">—</div>
+          <div class="small dim mt-1" id="weatherFeels">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UV-skala + förklaring -->
+    <section class="glass tint-scale p-4 mb-3">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <div class="small dim">UV-skala</div>
+        <div class="small dim">0–11+</div>
+      </div>
+
+      <div class="uv-scale" aria-hidden="true">
+        <span class="uv-seg uv-0"></span>
+        <span class="uv-seg uv-1"></span>
+        <span class="uv-seg uv-2"></span>
+        <span class="uv-seg uv-3"></span>
+        <span class="uv-seg uv-4"></span>
+        <span class="uv-seg uv-5"></span>
+        <span class="uv-seg uv-6"></span>
+        <span class="uv-seg uv-7"></span>
+        <span class="uv-seg uv-8"></span>
+        <span class="uv-seg uv-9"></span>
+        <span class="uv-seg uv-10"></span>
+        <span class="uv-seg uv-11"></span>
+        <span class="uv-seg uv-12"></span>
+        <div class="uv-scale-marker" id="uvScaleMarker" style="left:0%"></div>
+      </div>
+
+      <div class="small dim mt-2" id="uvScaleLabel">—</div>
+
+      <div class="scale-explain small dim mt-3">
+        <div><strong>Låg (0–2)</strong>: normalt skydd räcker ofta.</div>
+        <div><strong>Måttlig (3–5)</strong>: solskydd, skugga mitt på dagen.</div>
+        <div><strong>Hög (6–7)</strong>: extra skydd, undvik stark sol.</div>
+        <div><strong>Mycket hög (8–10)</strong>: minimera solexponering.</div>
+        <div><strong>Extrem (11+)</strong>: stanna i skugga, fullt skydd.</div>
+      </div>
+    </section>
+
+
     <!-- Top row: two cards -->
     <div class="row g-3 mb-3">
       <div class="col-12 col-lg-8">
-        <section class="glass p-4 p-md-5 h-100">
+        <section class="glass tint-cool p-4 p-md-5 h-100">
           <div class="small dim mb-2">UV-index nu</div>
           <div class="uv-big" id="uvNow">—</div>
           <div class="mt-2 d-flex gap-2 flex-wrap">
@@ -224,7 +355,7 @@
       </div>
 
       <div class="col-12 col-lg-4">
-        <section class="glass p-4 p-md-5 h-100">
+        <section class="glass tint-warm p-4 p-md-5 h-100">
           <div class="small dim mb-2">Topp idag</div>
           <div class="display-5 fw-semibold mb-1" id="uvMax">—</div>
           <div class="dim mb-3" id="uvMaxTime">—</div>
@@ -236,7 +367,7 @@
     <!-- Middle row -->
     <div class="row g-3 mb-3">
       <div class="col-12 col-md-6">
-        <div class="glass p-4 h-100">
+        <div class="glass tint-cool2 p-4 h-100">
           <div class="small dim mb-2">UV-index idag</div>
           <div class="h5 mb-2" id="todayNarrativeTitle">—</div>
           <div class="dim" id="todayNarrativeBody">—</div>
@@ -244,7 +375,7 @@
       </div>
 
       <div class="col-12 col-md-6">
-        <div class="glass p-4 h-100">
+        <div class="glass tint-neutral p-4 h-100">
           <div class="small dim mb-2">Rekommendation</div>
           <ul class="mb-0 dim" id="recList" style="padding-left: 1.1rem;">
             <li>—</li>
@@ -254,7 +385,7 @@
     </div>
 
     <!-- Forecast -->
-    <section class="glass p-3 p-md-4">
+    <section class="glass tint-neutral2 p-3 p-md-4">
       <div class="d-flex align-items-center justify-content-between mb-1">
         <div class="small dim">Prognos</div>
         <div class="small dim" id="forecastModeLabel">Kommande timmar</div>
@@ -270,11 +401,12 @@
     <footer class="site-footer">
       <div class="subtle-divider mb-3"></div>
       <div class="footer-row dim">
-        <div class="footer-left">Källa: Open-Meteo</div>
+        <div class="footer-left">Källa: <a class="footer-link" href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></div>
         <div class="footer-center">© 2026 uv.nu. Alla rättigheter förbehållna.</div>
         <div class="footer-right">UV-index kan variera lokalt</div>
       </div>
     </footer>
+    </div>
   </main>
 
   <script src="./app.js"></script>

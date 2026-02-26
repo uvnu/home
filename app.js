@@ -1,609 +1,480 @@
-// app.js (complete) — Open-Meteo (no API key)
-// + PWA install support:
-//   - Install button appears on supported browsers (Android Chrome etc.)
-//   - iOS hint shown (Share → Add to Home Screen)
-// + Forecast switches: hours (daytime) vs days max (nighttime)
+// app.js — UV.nu (Minimal nordisk utility)
+// Datakälla: Open‑Meteo (ingen API-nyckel)
+// - Hämtar UV (timvis) och väder (nuvarande)
+// - Stöd för sök på stad + "Min plats"
+// - Ritar en enkel UV-kurva (SVG) för dagen
+// - All text och kommentarer på svenska
 
 const DEFAULT_LOCATION = {
-  name: "Stockholm",
-  country: "SE",
+  namn: "Stockholm",
+  land: "SE",
   lat: 59.3293,
   lon: 18.0686,
 };
 
+// =========
+// Element
+// =========
 const el = {
+  // Hero
   locationName: document.getElementById("locationName"),
   updatedAt: document.getElementById("updatedAt"),
-  status: document.getElementById("status"),
-  weatherTemp: document.getElementById("weatherTemp"),
-  weatherSummary: document.getElementById("weatherSummary"),
-  weatherDetails: document.getElementById("weatherDetails"),
-  weatherIcon: document.getElementById("weatherIcon"),
-  weatherFeels: document.getElementById("weatherFeels"),
-  uvScaleMarker: document.getElementById("uvScaleMarker"),
-  uvScaleLabel: document.getElementById("uvScaleLabel"),
-  error: document.getElementById("error"),
-
   uvNow: document.getElementById("uvNow"),
   uvLevel: document.getElementById("uvLevel"),
-  uvHint: document.getElementById("uvHint"),
-
+  uvMarker: document.getElementById("uvMarker"),
   uvMax: document.getElementById("uvMax"),
   uvMaxTime: document.getElementById("uvMaxTime"),
-  uvMaxBand: document.getElementById("uvMaxBand"),
+  uvAdvice: document.getElementById("uvAdvice"),
 
-  todayNarrativeTitle: document.getElementById("todayNarrativeTitle"),
-  todayNarrativeBody: document.getElementById("todayNarrativeBody"),
-
-  recList: document.getElementById("recList"),
-
-  forecastStrip: document.getElementById("forecastStrip"),
-  forecastModeLabel: document.getElementById("forecastModeLabel"),
-  forecastSummary: document.getElementById("forecastSummary"),
-
+  // Sök / plats
   cityInput: document.getElementById("cityInput"),
-  cityInputMobile: document.getElementById("cityInputMobile"),
   useMyLocationBtn: document.getElementById("useMyLocationBtn"),
 
-  installBtn: document.getElementById("installBtn"),
-  installHint: document.getElementById("installHint"),
+  // Väder
+  tempNow: document.getElementById("tempNow"),
+  feelsLike: document.getElementById("feelsLike"),
+  cloudNow: document.getElementById("cloudNow"),
+  windNow: document.getElementById("windNow"),
+  weatherNote: document.getElementById("weatherNote"),
+
+  // Prognos
+  uvSpark: document.getElementById("uvSpark"),
+  uvTicks: document.getElementById("uvTicks"),
+
+  // Footer
+  yearNow: document.getElementById("yearNow"),
+
+  // Kontakt
+  kontaktForm: document.getElementById("kontaktForm"),
+  kontaktStatus: document.getElementById("kontaktStatus"),
+  kontaktSuccess: document.getElementById("kontaktSuccess"),
 };
 
-const STORAGE_KEY = "uvnu_location_v1"; // { name, lat, lon, country, state }
-let deferredInstallPrompt = null;
+// =========
+// State
+// =========
+let currentLocation = { ...DEFAULT_LOCATION };
 
-// ---------- small helpers ----------
-const round1 = (n) => Math.round(n * 10) / 10;
-
-const fmtUpdated = () => {
-  const d = new Date();
-  const hh = String(d.getHours()).padStart(2, "0");
-  const mm = String(d.getMinutes()).padStart(2, "0");
-  return `Uppdaterad ${hh}:${mm}`;
-};
-
-function setError(msg) {
-  el.error.textContent = msg || "";
+// =========
+// Hjälpare
+// =========
+function pad2(n) {
+  return String(n).padStart(2, "0");
 }
 
-function setStatus(msg) {
-  el.status.textContent = msg || "";
+function formatTid(d) {
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
 
-function saveLoc(loc) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(loc));
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
 }
 
-function loadLoc() {
+// UV-nivåer (förenklad, i linje med vanliga rekommendationer)
+function uvKategori(uv) {
+  if (uv < 3) return { namn: "Låg", accent: "var(--uv-green)" };
+  if (uv < 6) return { namn: "Måttlig", accent: "var(--uv-green)" };
+  if (uv < 8) return { namn: "Hög", accent: "var(--uv-amber)" };
+  if (uv < 11) return { namn: "Mycket hög", accent: "var(--uv-red)" };
+  return { namn: "Extrem", accent: "var(--uv-purple)" };
+}
+
+function uvRekommendation(uv) {
+  if (uv < 3) return "Inget särskilt skydd krävs för de flesta.";
+  if (uv < 6) return "Solskydd rekommenderas mitt på dagen.";
+  if (uv < 8) return "Sök skugga mitt på dagen och använd solskydd.";
+  if (uv < 11) return "Undvik stark sol mitt på dagen. Skydda hud och ögon.";
+  return "Undvik solen. Extra skydd behövs.";
+}
+
+// =========
+// Open‑Meteo: Geocoding (sök + reverse)
+// =========
+async function geokodaStad(query) {
+  const url = new URL("https://geocoding-api.open-meteo.com/v1/search");
+  url.searchParams.set("name", query);
+  url.searchParams.set("count", "5");
+  url.searchParams.set("language", "sv");
+  url.searchParams.set("format", "json");
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error("Kunde inte söka efter plats");
+  const data = await res.json();
+
+  if (!data || !Array.isArray(data.results) || data.results.length === 0) return null;
+
+  // Välj första träffen (ofta bäst). Vid behov kan vi förbättra ranking senare.
+  const r = data.results[0];
+  return {
+    namn: r.name,
+    land: r.country_code || "",
+    lat: r.latitude,
+    lon: r.longitude,
+  };
+}
+
+async function reverseGeokoda(lat, lon) {
+  // Open‑Meteo reverse endpoint (om det inte finns i framtiden, fall tillbaka)
+  const url = new URL("https://geocoding-api.open-meteo.com/v1/reverse");
+  url.searchParams.set("latitude", String(lat));
+  url.searchParams.set("longitude", String(lon));
+  url.searchParams.set("language", "sv");
+  url.searchParams.set("format", "json");
+
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const res = await fetch(url.toString());
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data || !Array.isArray(data.results) || data.results.length === 0) return null;
+
+    const r = data.results[0];
+    return r.name || null;
   } catch {
     return null;
   }
 }
 
-async function fetchJSON(url) {
-  const res = await fetch(url);
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`HTTP ${res.status} – ${text.slice(0, 140)}`);
-  }
+// =========
+// Open‑Meteo: UV + väder (en fetch)
+// =========
+async function hamtaData(lat, lon) {
+  // OBS: Vi använder "current=..." för temperatur/m.m. och "hourly=uv_index" för UV.
+  const url = new URL("https://api.open-meteo.com/v1/forecast");
+  url.searchParams.set("latitude", String(lat));
+  url.searchParams.set("longitude", String(lon));
+  url.searchParams.set("timezone", "auto");
+
+  // Nuvarande väder (inkl. 'apparent_temperature' = känns som)
+  url.searchParams.set("current", "temperature_2m,apparent_temperature,cloud_cover,wind_speed_10m");
+
+  // UV timvis + max per dag
+  url.searchParams.set("hourly", "uv_index");
+  url.searchParams.set("daily", "uv_index_max");
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error("Kunde inte hämta data från Open‑Meteo");
   return res.json();
 }
 
-// ---------- UV logic ----------
-function uvBand(uvi) {
-  if (uvi < 3) return { label: "Låg" };
-  if (uvi < 6) return { label: "Måttlig" };
-  if (uvi < 8) return { label: "Hög" };
-  if (uvi < 11) return { label: "Mycket hög" };
-  return { label: "Extrem" };
+// =========
+// Render: Hero (UV nu, nivå, topp idag, rekommendation)
+// =========
+function renderHero({ uvNow, uvMax, uvMaxTime }) {
+  const uvR = Math.round(uvNow * 10) / 10;
+  el.uvNow.textContent = Number.isFinite(uvR) ? String(uvR) : "--";
+
+  const cat = uvKategori(uvR);
+  el.uvLevel.textContent = cat.namn;
+  el.uvLevel.style.color = `rgba(17,24,39,.9)`;
+  el.uvNow.style.color = cat.accent;
+
+  // Markör på 0–12 skala (vi klipper vid 12 för layout)
+  const pct = (clamp(uvR, 0, 12) / 12) * 100;
+  el.uvMarker.style.left = `${pct}%`;
+
+  el.uvMax.textContent = Number.isFinite(uvMax) ? String(Math.round(uvMax * 10) / 10) : "--";
+  el.uvMaxTime.textContent = uvMaxTime || "--:--";
+
+  el.uvAdvice.textContent = uvRekommendation(uvR);
 }
 
-function uvHintText(uvi) {
-  if (uvi < 3) return "Lugnt. Solskydd oftast inte nödvändigt.";
-  if (uvi < 6) return "SPF om du är ute länge.";
-  if (uvi < 8) return "SPF 30+, solglasögon, sök skugga.";
-  if (uvi < 11) return "Undvik solen mitt på dagen. SPF 50.";
-  return "Extra försiktighet. Håll dig i skugga.";
+// =========
+// Render: Väder (inkl. "Känns som")
+// =========
+function renderWeather(current) {
+  const t = current?.temperature_2m;
+  const feels = current?.apparent_temperature;
+  const cloud = current?.cloud_cover;
+  const wind = current?.wind_speed_10m;
+
+  el.tempNow.textContent = Number.isFinite(t) ? Math.round(t) : "--";
+  el.feelsLike.textContent = Number.isFinite(feels) ? Math.round(feels) : "--";
+  el.cloudNow.textContent = Number.isFinite(cloud) ? Math.round(cloud) : "--";
+  el.windNow.textContent = Number.isFinite(wind) ? Math.round(wind * 10) / 10 : "--";
+
+  // Diskret notis (t.ex. "Nu")
+  el.weatherNote.textContent = "Nu";
 }
 
-function recListFor(uvi) {
-  if (uvi < 3)
-    return [
-      "Solglasögon om du vill",
-      "Håll koll om du är extra känslig",
-      "Barn: skydda ändå vid längre utevistelse",
-    ];
-  if (uvi < 6)
-    return [
-      "SPF 30 vid längre utevistelse",
-      "Solglasögon",
-      "Sök skugga om du är ute mitt på dagen",
-    ];
-  if (uvi < 8)
-    return [
-      "SPF 30+ och fyll på varannan timme",
-      "Keps/solhatt + solglasögon",
-      "Planera skugga 11–15",
-    ];
-  if (uvi < 11)
-    return [
-      "SPF 50 och fyll på ofta",
-      "Täckande kläder/solhatt",
-      "Undvik direkt sol 11–15",
-    ];
-  return [
-    "SPF 50+ och täckande kläder",
-    "Stanna i skugga så mycket som möjligt",
-    "Extra försiktighet med barn",
-  ];
-}
+// =========
+// Hitta UV-värden för "nu" och "topp idag" från timserien
+// =========
+function analyseraUV(hourly, timezoneInfo) {
+  const times = hourly?.time || [];
+  const uv = hourly?.uv_index || [];
 
-// ---------- Place + text helpers ----------
-function renderLocation(loc) {
-  const parts = [loc.name];
-  if (loc.state) parts.push(loc.state);
-  if (loc.country) parts.push(loc.country);
-  el.locationName.textContent = parts.join(", ");
-  el.updatedAt.textContent = fmtUpdated();
-}
-
-function placeShortName() {
-  const t = el.locationName?.textContent || "";
-  return t.split(",")[0].trim() || "platsen";
-}
-
-// ---------- Open-Meteo calls ----------
-async function geocodeCity(q) {
-  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
-    q
-  )}&count=1&language=sv&format=json`;
-  const data = await fetchJSON(url);
-  const r = data?.results?.[0];
-  if (!r) return null;
-  return {
-    name: r.name,
-    country: r.country_code || r.country,
-    lat: r.latitude,
-    lon: r.longitude,
-    state: r.admin1,
-  };
-}
-
-async function openMeteoUV(lat, lon) {
-  const url =
-    `https://api.open-meteo.com/v1/forecast` +
-    `?latitude=${lat}&longitude=${lon}` +
-    `&current=uv_index` +
-    `&hourly=uv_index` +
-    `&daily=uv_index_max` +
-    `&timezone=auto` +
-    `&forecast_days=5`;
-  return fetchJSON(url);
-}
-
-
-async function openMeteoWeather(lat, lon) {
-  // Hämtar grundläggande väderdata utan API-nyckel
-  const url =
-    `https://api.open-meteo.com/v1/forecast` +
-    `?latitude=${lat}&longitude=${lon}` +
-    `&current=temperature_2m,apparent_temperature,weathercode,wind_speed_10m,relative_humidity_2m` +
-    `&timezone=auto`;
-  return fetchJSON(url);
-}
-
-function weatherCodeToText(code) {
-  // Open-Meteo Weathercode: https://open-meteo.com/en/docs
-  const m = {
-    0: "Klart",
-    1: "Mest klart",
-    2: "Delvis molnigt",
-    3: "Mulet",
-    45: "Dimma",
-    48: "Rimfrost-dimma",
-    51: "Duggregn (lätt)",
-    53: "Duggregn",
-    55: "Duggregn (kraftigt)",
-    56: "Underkylt duggregn (lätt)",
-    57: "Underkylt duggregn",
-    61: "Regn (lätt)",
-    63: "Regn",
-    65: "Regn (kraftigt)",
-    66: "Underkylt regn (lätt)",
-    67: "Underkylt regn",
-    71: "Snö (lätt)",
-    73: "Snö",
-    75: "Snö (kraftigt)",
-    77: "Kornsnö",
-    80: "Regnskurar (lätta)",
-    81: "Regnskurar",
-    82: "Regnskurar (kraftiga)",
-    85: "Snöskurar (lätta)",
-    86: "Snöskurar",
-    95: "Åska",
-    96: "Åska med hagel (lätt)",
-    99: "Åska med hagel",
-  };
-  return m[code] ?? "Väder";
-}
-
-function weatherCodeToEmoji(code) {
-  // En enkel ikon-karta som funkar överallt (utan extra bilder)
-  if (code === 0) return "☀️";
-  if (code === 1) return "🌤️";
-  if (code === 2) return "⛅";
-  if (code === 3) return "☁️";
-  if (code === 45 || code === 48) return "🌫️";
-  if ([51,53,55,56,57].includes(code)) return "🌦️";
-  if ([61,63,65,66,67,80,81,82].includes(code)) return "🌧️";
-  if ([71,73,75,77,85,86].includes(code)) return "🌨️";
-  if ([95,96,99].includes(code)) return "⛈️";
-  return "🌡️";
-}
-
-function renderWeather(weatherData) {
-  if (!weatherData || !weatherData.current) return;
-
-  const c = weatherData.current;
-
-  const temp = typeof c.temperature_2m === "number" ? Math.round(c.temperature_2m) : null;
-  const feels = typeof c.apparent_temperature === "number" ? Math.round(c.apparent_temperature) : null;
-  const wind = typeof c.wind_speed_10m === "number" ? Math.round(c.wind_speed_10m) : null;
-  const rh = typeof c.relative_humidity_2m === "number" ? Math.round(c.relative_humidity_2m) : null;
-  const code = c.weathercode;
-
-  const text = weatherCodeToText(code);
-  const emoji = weatherCodeToEmoji(code);
-
-  if (el.weatherTemp) el.weatherTemp.textContent = temp !== null ? `${temp}°` : "—";
-  if (el.weatherSummary) el.weatherSummary.textContent = text;
-  if (el.weatherIcon) el.weatherIcon.textContent = emoji;
-
-  const details = [];
-  if (wind !== null) details.push(`Vind ${wind} m/s`);
-  if (rh !== null) details.push(`Luftfuktighet ${rh}%`);
-  if (el.weatherDetails) el.weatherDetails.textContent = details.length ? details.join(" • ") : "—";
-
-  if (el.weatherFeels) {
-    el.weatherFeels.textContent = feels !== null ? `Känns som ${feels}°` : "";
-  }
-}
-
-// ---------- Forecast rendering ----------
-function renderForecastStrip(nowUvi, data) {
-  el.forecastStrip.innerHTML = "";
-
-  const nowIsNight = nowUvi < 0.5;
-
-  if (el.forecastModeLabel) {
-    el.forecastModeLabel.textContent = nowIsNight ? "Kommande dagar" : "Kommande timmar";
+  if (!times.length || !uv.length) {
+    return { uvNow: NaN, uvMax: NaN, uvMaxTime: null, points: [] };
   }
 
-  if (nowIsNight) {
-    const dTimes = data?.daily?.time || [];
-    const dMax = data?.daily?.uv_index_max || [];
-    const count = Math.min(5, dTimes.length, dMax.length);
-
-    if (el.forecastSummary) {
-      let bestI = 0;
-      for (let i = 0; i < count; i++) {
-        if (typeof dMax[i] === "number" && dMax[i] > dMax[bestI]) bestI = i;
-      }
-      const top = dMax[bestI];
-      const day =
-        bestI === 0 ? "idag" :
-        bestI === 1 ? "imorgon" :
-        new Date(dTimes[bestI] + "T12:00:00").toLocaleDateString("sv-SE", { weekday: "long" });
-
-      el.forecastSummary.textContent =
-        (typeof top === "number")
-          ? `Högst de kommande dagarna: ${round1(top).toFixed(1)} (${uvBand(top).label}) ${day}.`
-          : "";
-    }
-
-    for (let i = 0; i < count; i++) {
-      const dateStr = dTimes[i];
-      const v = dMax[i];
-      const u = typeof v === "number" ? Math.round(v) : "—";
-      const lbl = typeof v === "number" ? uvBand(v).label : "";
-
-      let dayLabel = "—";
-      if (i === 0) dayLabel = "Idag";
-      else if (i === 1) dayLabel = "Imorgon";
-      else {
-        const d = new Date(dateStr + "T12:00:00");
-        dayLabel = d.toLocaleDateString("sv-SE", { weekday: "short" });
-      }
-
-      const card = document.createElement("div");
-      card.className = "glass mini-card p-3";
-      card.innerHTML = `
-        <div class="small dim">${dayLabel}</div>
-        <div class="h4 mb-0">${u}</div>
-        <div class="small dim">${lbl}</div>
-      `;
-      el.forecastStrip.appendChild(card);
-    }
-    return;
-  }
-
-  if (el.forecastSummary) el.forecastSummary.textContent = "";
-
-  const times = data?.hourly?.time || [];
-  const uvs = data?.hourly?.uv_index || [];
+  // Open‑Meteo ger tider i lokal tid när timezone=auto.
   const now = new Date();
+  const todayKey = now.toISOString().slice(0, 10);
 
-  let start = 0;
+  // Hitta index närmast "nu"
+  let bestIdx = 0;
+  let bestDiff = Infinity;
   for (let i = 0; i < times.length; i++) {
-    const t = new Date(times[i]);
-    if (t >= now) {
-      start = i;
-      break;
+    const dt = new Date(times[i]);
+    const diff = Math.abs(dt.getTime() - now.getTime());
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      bestIdx = i;
+    }
+  }
+  const uvNow = uv[bestIdx];
+
+  // Topp idag (max under samma datum)
+  let uvMax = -Infinity;
+  let uvMaxIdx = null;
+
+  for (let i = 0; i < times.length; i++) {
+    const t = times[i];
+    if (t.slice(0, 10) !== todayKey) continue;
+
+    const v = uv[i];
+    if (Number.isFinite(v) && v > uvMax) {
+      uvMax = v;
+      uvMaxIdx = i;
     }
   }
 
-  for (let i = start; i < Math.min(start + 8, times.length); i++) {
-    const t = times[i]?.slice(11, 16) || "";
-    const v = uvs[i];
-    const u = typeof v === "number" ? Math.round(v) : "—";
-    const lbl = typeof v === "number" ? uvBand(v).label : "";
+  const uvMaxTime = uvMaxIdx != null ? formatTid(new Date(times[uvMaxIdx])) : null;
 
-    const card = document.createElement("div");
-    card.className = "glass mini-card p-3";
-    card.innerHTML = `
-      <div class="small dim">${t}</div>
-      <div class="h4 mb-0">${u}</div>
-      <div class="small dim">${lbl}</div>
-    `;
-    el.forecastStrip.appendChild(card);
+  // Punkter för dagskurva (06–19) för att inte se "tomt" ut
+  const points = [];
+  for (let i = 0; i < times.length; i++) {
+    if (times[i].slice(0, 10) !== todayKey) continue;
+    const d = new Date(times[i]);
+    const h = d.getHours();
+    if (h < 6 || h > 19) continue;
+    points.push({ h, v: uv[i] });
   }
-}
 
-// ---------- Main render ----------
-function renderUV(data) {
-  const nowUvi = data?.current?.uv_index;
-  if (typeof nowUvi !== "number")
-    throw new Error("Hittade ingen UV-data (current.uv_index).");
-
-  // UV now card
-  el.uvNow.textContent = round1(nowUvi).toFixed(1);
-  el.uvLevel.textContent = uvBand(nowUvi).label;
-  el.uvHint.textContent = uvHintText(nowUvi);
-
-  // Find today's peak time from hourly max for today's date
-  const todayMax = data?.daily?.uv_index_max?.[0];
-  const todayDate = data?.daily?.time?.[0];
-
-  let peakTxt = "mitt på dagen";
-  if (todayDate) {
-    const times = data?.hourly?.time || [];
-    const uvs = data?.hourly?.uv_index || [];
-    let bestIdx = -1;
-    let bestVal = -Infinity;
-
-    for (let i = 0; i < times.length; i++) {
-      if (!times[i]?.startsWith(todayDate)) continue;
-      const v = uvs[i];
-      if (typeof v === "number" && v > bestVal) {
-        bestVal = v;
-        bestIdx = i;
-      }
+  // Om vi saknar data i det intervallet (t.ex. polarnatt / API-issue) så ta första 8 punkter som fallback
+  if (points.length < 2) {
+    for (let i = 0; i < Math.min(8, times.length); i++) {
+      const d = new Date(times[i]);
+      points.push({ h: d.getHours(), v: uv[i] });
     }
-    if (bestIdx >= 0) peakTxt = times[bestIdx].slice(11, 16);
   }
 
-  const place = placeShortName();
+  return {
+    uvNow,
+    uvMax: Number.isFinite(uvMax) ? uvMax : NaN,
+    uvMaxTime,
+    points,
+  };
+}
 
-  if (typeof todayMax === "number") {
-    const maxTxt = round1(todayMax).toFixed(1);
+// =========
+// Render: UV-prognos (enkel SVG-sparkline)
+// =========
+function renderUvSpark(points) {
+  const svg = el.uvSpark;
+  if (!svg) return;
 
-    // Peak today card
-    el.uvMax.textContent = maxTxt;
-    el.uvMaxTime.textContent = `kring ${peakTxt}`;
-    if (el.uvMaxBand) el.uvMaxBand.textContent = uvBand(todayMax).label;
+  // Rensa
+  svg.innerHTML = "";
 
-    // Narrative (sound + Apple-ish)
-    const narrativeTitle = `Solen i ${place} är som starkast runt ${peakTxt} med UV-index ${maxTxt}.`;
+  const W = 420;
+  const H = 120;
+  const padX = 14;
+  const padY = 14;
 
-    let narrativeBody = "";
-    if (todayMax < 3) {
-      narrativeBody = "UV är låg idag — solskydd är oftast inte nödvändigt.";
-    } else if (todayMax < 6) {
-      narrativeBody = "UV är måttlig — använd SPF om du är ute länge, särskilt mitt på dagen.";
-    } else {
-      narrativeBody = "Vid UV-index 3+ är det bra för de flesta att skydda sig. Planera skugga 11–15.";
-    }
+  // Skala
+  const xs = points.map(p => p.h);
+  const ys = points.map(p => p.v);
 
-    el.todayNarrativeTitle.textContent = narrativeTitle;
-    el.todayNarrativeBody.textContent = narrativeBody;
-  } else {
-    el.uvMax.textContent = "—";
-    el.uvMaxTime.textContent = "—";
-    if (el.uvMaxBand) el.uvMaxBand.textContent = "";
-    el.todayNarrativeTitle.textContent = "—";
-    el.todayNarrativeBody.textContent = "—";
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const maxY = Math.max(2, ...ys.filter(Number.isFinite)); // minst 2 så det inte blir platt
+  const minY = 0;
+
+  function xScale(h) {
+    if (maxX === minX) return W / 2;
+    return padX + ((h - minX) / (maxX - minX)) * (W - padX * 2);
+  }
+  function yScale(v) {
+    const vv = clamp(v, minY, 12);
+    const t = (vv - minY) / (maxY - minY || 1);
+    return H - padY - t * (H - padY * 2);
   }
 
-  // Recommendation list based on current UV
-  const rec = recListFor(nowUvi);
-  el.recList.innerHTML = rec.map((x) => `<li>${x}</li>`).join("");
+  // Grid (lätt)
+  for (let i = 0; i < 4; i++) {
+    const y = padY + (i / 3) * (H - padY * 2);
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", "0");
+    line.setAttribute("x2", String(W));
+    line.setAttribute("y1", String(y));
+    line.setAttribute("y2", String(y));
+    line.setAttribute("class", "spark-grid");
+    svg.appendChild(line);
+  }
 
-  // Forecast strip
-  renderForecastStrip(nowUvi, data);
-}
-
-// ---------- Refresh ----------
-async function setLocationAndRefresh(loc) {
-  setError("");
-  setStatus("Hämtar UV- och väderdata…");
-  renderLocation(loc);
-
-  const [uvData, weatherData] = await Promise.all([
-    openMeteoUV(loc.lat, loc.lon),
-    openMeteoWeather(loc.lat, loc.lon),
-  ]);
-
-  renderWeather(weatherData);
-  renderUV(uvData);
-
-  setStatus("");
-}
-
-// ---------- Location flow ----------
-function getBrowserLocation() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation)
-      reject(new Error("Geolocation stöds inte i din webbläsare."));
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      (err) => reject(new Error(err.message || "Kunde inte hämta din plats.")),
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 10 * 60 * 1000 }
-    );
-  });
-}
-
-async function useMyLocation() {
-  setError("");
-  setStatus("Hämtar din plats… (tillåt platsåtkomst)");
-  const { lat, lon } = await getBrowserLocation();
-  const loc = { name: "Min plats", lat, lon, country: "" };
-  saveLoc(loc);
-  await setLocationAndRefresh(loc);
-}
-
-async function searchAndSetCity(q) {
-  setError("");
-  setStatus("Söker plats…");
-  const loc = await geocodeCity(q);
-  if (!loc) throw new Error("Hittade ingen matchning. Prova t.ex. “Göteborg” eller “Umeå”.");
-  saveLoc(loc);
-  await setLocationAndRefresh(loc);
-}
-
-// ---------- PWA / Install UX ----------
-function isStandalone() {
-  // iOS Safari uses navigator.standalone
-  // Others can use matchMedia display-mode
-  return (
-    window.navigator.standalone === true ||
-    window.matchMedia?.("(display-mode: standalone)")?.matches
-  );
-}
-
-function isIOS() {
-  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-}
-
-function setupInstallUX() {
-  // Android/Chrome: capture install prompt
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredInstallPrompt = e;
-    if (el.installBtn) el.installBtn.style.display = "inline-block";
+  // Path
+  let d = "";
+  points.forEach((p, i) => {
+    const x = xScale(p.h);
+    const y = yScale(p.v);
+    d += (i === 0 ? "M" : "L") + x.toFixed(2) + " " + y.toFixed(2) + " ";
   });
 
-  if (el.installBtn) {
-    el.installBtn.addEventListener("click", async () => {
-      if (!deferredInstallPrompt) return;
-      deferredInstallPrompt.prompt();
-      await deferredInstallPrompt.userChoice.catch(() => null);
-      deferredInstallPrompt = null;
-      el.installBtn.style.display = "none";
-    });
-  }
+  // Fyllning under linjen (diskret)
+  const fillPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  const firstX = xScale(points[0].h);
+  const lastX = xScale(points[points.length - 1].h);
+  const baseY = H - padY;
 
-  // iOS: show a small hint (no native prompt)
-  if (isIOS() && !isStandalone() && el.installHint) {
-    el.installHint.style.display = "block";
-    el.installHint.textContent = "Tips: På iPhone, tryck Dela och välj ”Lägg till på hemskärmen” för att spara UV.nu som app.";
-  }
+  const dFill = `${d} L ${lastX.toFixed(2)} ${baseY.toFixed(2)} L ${firstX.toFixed(2)} ${baseY.toFixed(2)} Z`;
+  fillPath.setAttribute("d", dFill);
+  fillPath.setAttribute("class", "spark-fill");
+  svg.appendChild(fillPath);
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", d.trim());
+  path.setAttribute("class", "spark-line");
+  svg.appendChild(path);
+
+  // Markera topp
+  let peak = { v: -Infinity, h: points[0].h, idx: 0 };
+  points.forEach((p, i) => {
+    if (Number.isFinite(p.v) && p.v > peak.v) peak = { v: p.v, h: p.h, idx: i };
+  });
+
+  const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  dot.setAttribute("cx", String(xScale(peak.h)));
+  dot.setAttribute("cy", String(yScale(peak.v)));
+  dot.setAttribute("r", "6");
+  dot.setAttribute("class", "spark-dot");
+  svg.appendChild(dot);
+
+  // Tick-etiketter under grafen (minimalt)
+  const tickHours = [points[0].h, 9, 12, 15, 18].filter(h => h >= minX && h <= maxX);
+  const uniqueTicks = [...new Set(tickHours)].sort((a,b)=>a-b);
+  el.uvTicks.innerHTML = uniqueTicks.map(h => `<span>${h === points[0].h ? "Nu" : String(h)}</span>`).join("");
 }
 
-// ---------- Service worker ----------
-async function registerSW() {
-  if (!("serviceWorker" in navigator)) return;
-  try {
-    await navigator.serviceWorker.register("/sw.js");
-  } catch {
-    // ignore
-  }
+// =========
+// Uppdatera UI
+// =========
+async function uppdatera() {
+  // Tidstämpel
+  el.updatedAt.textContent = formatTid(new Date());
+  el.locationName.textContent = currentLocation.namn || "Min plats";
+
+  const data = await hamtaData(currentLocation.lat, currentLocation.lon);
+
+  // Väder
+  renderWeather(data.current);
+
+  // UV
+  const uvInfo = analyseraUV(data.hourly, data.timezone);
+  renderHero({ uvNow: uvInfo.uvNow, uvMax: uvInfo.uvMax, uvMaxTime: uvInfo.uvMaxTime });
+  renderUvSpark(uvInfo.points);
 }
 
-// ---------- Init ----------
-function wireInputs() {
-  const handler = async (value) => {
-    const q = (value || "").trim();
+// =========
+// Events: sök / min plats
+// =========
+function setupEvents() {
+  // Sök på stad (Enter)
+  el.cityInput?.addEventListener("keydown", async (e) => {
+    if (e.key !== "Enter") return;
+    const q = (el.cityInput.value || "").trim();
     if (!q) return;
+
     try {
-      await searchAndSetCity(q);
-    } catch (e) {
-      setStatus("");
-      setError(e.message || String(e));
-    }
-  };
-
-  const bind = (input) => {
-    if (!input) return;
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handler(input.value);
-    });
-  };
-
-  bind(el.cityInput);
-  bind(el.cityInputMobile);
-
-  el.useMyLocationBtn.addEventListener("click", async () => {
-    try {
-      await useMyLocation();
-    } catch {
-      setStatus("Visar standardplats (Stockholm)…");
-      setError("");
-      try {
-        saveLoc(DEFAULT_LOCATION);
-        await setLocationAndRefresh(DEFAULT_LOCATION);
-      } catch {
-        setStatus("");
-        setError("Kunde inte hämta UV-data.");
+      el.cityInput.blur();
+      const place = await geokodaStad(q);
+      if (!place) {
+        // Håll det enkelt: återställ värdet
+        el.cityInput.value = "";
+        return;
       }
+      currentLocation = { ...place };
+      await uppdatera();
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  // Min plats
+  el.useMyLocationBtn?.addEventListener("click", async () => {
+    if (!navigator.geolocation) return;
+
+    el.useMyLocationBtn.disabled = true;
+    el.useMyLocationBtn.textContent = "Hämtar…";
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      try {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        currentLocation = { namn: "Min plats", land: "", lat, lon };
+
+        // Försök få ett riktigt ortnamn utan API-nyckel
+        const stad = await reverseGeokoda(lat, lon);
+        if (stad) currentLocation.namn = stad;
+
+        await uppdatera();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        el.useMyLocationBtn.disabled = false;
+        el.useMyLocationBtn.textContent = "Min plats";
+      }
+    }, (err) => {
+      console.warn(err);
+      el.useMyLocationBtn.disabled = false;
+      el.useMyLocationBtn.textContent = "Min plats";
+    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+  });
+
+  // Kontaktform (valfritt — skickas bara om du kopplar in en tjänst)
+  el.kontaktForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    el.kontaktStatus.textContent = "";
+    el.kontaktSuccess.classList.add("d-none");
+
+    const action = el.kontaktForm.getAttribute("action") || "#";
+    if (action === "#" || action.trim() === "") {
+      el.kontaktStatus.textContent = "Formulär ej aktiverat ännu.";
+      return;
+    }
+
+    try {
+      const formData = new FormData(el.kontaktForm);
+      const res = await fetch(action, {
+        method: "POST",
+        headers: { "Accept": "application/json" },
+        body: formData
+      });
+
+      if (!res.ok) throw new Error("Skick misslyckades");
+
+      el.kontaktForm.reset();
+      el.kontaktSuccess.classList.remove("d-none");
+    } catch (err) {
+      el.kontaktStatus.textContent = "Kunde inte skicka. Försök igen senare.";
+      console.error(err);
     }
   });
 }
 
-(async function init() {
-  setupInstallUX();
-  registerSW();
-  wireInputs();
+// =========
+// Init
+// =========
+(function init() {
+  // Footer-år
+  if (el.yearNow) el.yearNow.textContent = String(new Date().getFullYear());
 
-  // 1) Saved location
-  const saved = loadLoc();
-  if (saved?.lat && saved?.lon) {
-    try {
-      await setLocationAndRefresh(saved);
-      return;
-    } catch {
-      // fall through
-    }
-  }
+  setupEvents();
+  uppdatera().catch(console.error);
 
-  // 2) Browser location
-  try {
-    await useMyLocation();
-    return;
-  } catch {
-    // 3) Stockholm fallback
-    setStatus("Visar standardplats (Stockholm)…");
-    setError("");
-    try {
-      saveLoc(DEFAULT_LOCATION);
-      await setLocationAndRefresh(DEFAULT_LOCATION);
-    } catch {
-      setStatus("");
-      setError("Kunde inte hämta UV-data.");
-      el.locationName.textContent = "Välj plats";
-      el.updatedAt.textContent = "—";
-    }
+  // PWA: service worker (om du redan har sw.js)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
   }
 })();

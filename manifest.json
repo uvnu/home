@@ -1,0 +1,19 @@
+{
+  "name": "uv.nu – UV-index Sverige",
+  "short_name": "uv.nu",
+  "description": "Aktuellt UV-index för Sverige, justerat för molnighet.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ee",
+  "theme_color": "#f7f4ee",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

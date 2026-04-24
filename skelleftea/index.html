@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>UV-index Skellefteå idag – uv.nu</title>
+  <meta name="description" content="Aktuellt UV-index i Skellefteå idag. Se när solskydd rekommenderas, dagens topp och UV-prognos timme för timme.">
+  <link rel="canonical" href="https://uv.nu/skelleftea/">
+  <meta name="theme-color" content="#f7f4ee">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="uv.nu">
+  <meta property="og:title" content="UV-index Skellefteå idag – uv.nu">
+  <meta property="og:description" content="Aktuellt UV-index i Skellefteå idag. Se när solskydd rekommenderas, dagens topp och UV-prognos timme för timme.">
+  <meta property="og:url" content="https://uv.nu/skelleftea/">
+  <meta property="og:type" content="website">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="apple-touch-icon" href="../icon.svg">
+  <link rel="stylesheet" href="../styles.css">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "UV-index Skellefteå idag", "url": "https://uv.nu/skelleftea/", "applicationCategory": "WeatherApplication", "operatingSystem": "Any", "description": "Aktuellt UV-index i Skellefteå idag. Se när solskydd rekommenderas, dagens topp och UV-prognos timme för timme."}</script>
+</head>
+<body>
+  <div class="page">
+    <div id="install-banner" class="banner" aria-live="polite">
+      <div><div class="banner-title">Lägg till uv.nu på hemskärmen</div><div id="install-copy" class="banner-copy"></div></div>
+      <button id="install-close" class="text-btn" type="button">Stäng</button>
+    </div>
+
+    <header class="topbar">
+      <a class="brand" href="../" aria-label="uv.nu startsida" style="text-decoration:none">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div><div class="brand-title">uv.nu</div><div class="brand-sub">UV-index för Sverige och fler platser</div></div>
+      </a>
+      <button id="location-btn" class="pill-btn" type="button" aria-haspopup="dialog"><span class="muted">Plats</span><span id="location-label" class="value">Skellefteå</span></button>
+    </header>
+
+    <main>
+      <section class="card hero">
+        <div class="hero-top">
+          <div>
+            <div class="eyebrow">Uppdaterad <span id="updated-at">–</span></div>
+            <h1 class="page-title">UV-index i Skellefteå idag</h1>
+            <p class="visually-hidden">Aktuellt UV-index för Skellefteå, med dagens topp, molnighet och tydliga rekommendationer.</p>
+          </div>
+        </div>
+        <div class="hero-main">
+          <div>
+            <div id="uv-number" class="uv-number">–</div>
+            <div id="hero-status" class="hero-status">Hämtar data…</div>
+            <div id="hero-copy" class="hero-copy">Vi hämtar dagens UV-index och molnighet för vald plats.</div>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-row"><div class="label">Skydd</div><div id="protect-value" class="value">–</div></div>
+            <div class="stat-row"><div class="label">Dagens topp</div><div id="peak-value" class="value">–</div></div>
+            <div class="stat-row"><div class="label">Molnighet nu</div><div id="cloud-value" class="value">–</div></div>
+          </div>
+        </div>
+        <div class="scale">
+          <div class="scale-track"><div id="scale-marker" class="scale-marker" style="left:0%"></div></div>
+          <div class="scale-labels">
+            <div class="scale-low"><strong>1–2</strong>Låg</div><div class="scale-moderate"><strong>3–5</strong>Måttlig</div><div class="scale-high"><strong>6–7</strong>Hög</div><div class="scale-very-high"><strong>8–10</strong>Mycket hög</div><div class="scale-extreme"><strong>11+</strong>Extrem</div>
+          </div>
+        </div>
+      </section>
+
+      <p class="source-line">Enligt <a href="https://www.stralsakerhetsmyndigheten.se" target="_blank" rel="noopener">Strålsäkerhetsmyndigheten</a> är det viktigt för de flesta att skydda sig i solen när UV-index är 3 eller högre.</p>
+
+      <div class="main-content">
+        <section class="card chart-card">
+          <div class="chart-head"><div><div class="section-title">UV-index idag</div><div id="chart-note" class="chart-note">Timme för timme</div></div></div>
+          <div id="chart-bars" class="chart-wrap" aria-label="UV-index idag som stapeldiagram"></div>
+          <div class="legend"><span class="legend-item"><span class="legend-dot" style="background:var(--uv-low)"></span>Låg</span><span class="legend-item"><span class="legend-dot" style="background:var(--uv-moderate)"></span>Måttlig</span><span class="legend-item"><span class="legend-dot" style="background:var(--uv-high)"></span>Hög</span><span class="legend-item"><span class="legend-dot" style="background:var(--uv-very-high)"></span>Mycket hög</span><span class="legend-item"><span class="legend-dot" style="background:var(--uv-extreme)"></span>Extrem</span></div>
+        </section>
+        <section class="card tips-card">
+          <div class="section-title">Rekommendationer idag</div>
+          <div id="tips-grid" class="tips-grid"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">© 2026 uv.nu · Data från <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></footer>
+  </div>
+
+  <div id="search-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="search-title">
+    <div class="sheet">
+      <div class="sheet-head"><div><div id="search-title" class="sheet-title">Välj plats</div><div class="sheet-sub">Sverige först, med stöd för stadsdelar, alias och utvalda platser utomlands.</div></div><button id="search-close" class="icon-btn" type="button" aria-label="Stäng">×</button></div>
+      <div class="sheet-body"><div class="search-input-row"><input id="search-input" class="search-input" type="search" placeholder="Sök ort, kommun, stadsdel eller stad…" autocomplete="off"><button id="gps-btn" class="ghost-btn" type="button">Min position</button></div><div id="search-results" class="search-results"><div class="hint">Börja skriva för att söka. Exempel: Stockholm, Aspudden, Åre, Köpenhamn.</div></div></div>
+    </div>
+  </div>
+  <script>window.UVNU_INITIAL_PLACE = {"name": "Skellefteå", "lat": 64.7528, "lon": 20.8717, "route_slug": "skelleftea", "county": "Västerbottens län"};</script>
+  <script>window.UVNU_ASSET_BASE = '../';</script>
+  <script src="../sweden-search.js"></script>
+  <script src="../app.js"></script>
+</body>
+</html>

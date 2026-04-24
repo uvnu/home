@@ -1,0 +1,402 @@
+[
+  {
+    "name": "Stockholm",
+    "slug": "stockholm",
+    "lat": 59.3202,
+    "lon": 17.9545,
+    "county": "Stockholms län",
+    "population": 1652895
+  },
+  {
+    "name": "Göteborg",
+    "slug": "goteborg",
+    "lat": 57.657,
+    "lon": 11.9946,
+    "county": "Västra Götalands län",
+    "population": 674529
+  },
+  {
+    "name": "Malmö",
+    "slug": "malmo",
+    "lat": 55.5968,
+    "lon": 13.0123,
+    "county": "Skåne län",
+    "population": 339316
+  },
+  {
+    "name": "Uppsala",
+    "slug": "uppsala",
+    "lat": 59.8434,
+    "lon": 17.5501,
+    "county": "Uppsala län",
+    "population": 174982
+  },
+  {
+    "name": "Upplands Väsby och Sollentuna",
+    "slug": "upplands-vasby-och-sollentuna",
+    "lat": 59.4658,
+    "lon": 17.8805,
+    "county": "Stockholms län",
+    "population": 156517
+  },
+  {
+    "name": "Västerås",
+    "slug": "vasteras",
+    "lat": 59.6301,
+    "lon": 16.5429,
+    "county": "Västmanlands län",
+    "population": 131643
+  },
+  {
+    "name": "Örebro",
+    "slug": "orebro",
+    "lat": 59.2609,
+    "lon": 15.1914,
+    "county": "Örebro län",
+    "population": 128658
+  },
+  {
+    "name": "Linköping",
+    "slug": "linkoping",
+    "lat": 58.3986,
+    "lon": 15.6264,
+    "county": "Östergötlands län",
+    "population": 116851
+  },
+  {
+    "name": "Helsingborg",
+    "slug": "helsingborg",
+    "lat": 56.0391,
+    "lon": 12.7212,
+    "county": "Skåne län",
+    "population": 116029
+  },
+  {
+    "name": "Jönköping",
+    "slug": "jonkoping",
+    "lat": 57.7451,
+    "lon": 14.1328,
+    "county": "Jönköpings län",
+    "population": 103032
+  },
+  {
+    "name": "Lund",
+    "slug": "lund",
+    "lat": 55.7079,
+    "lon": 13.1997,
+    "county": "Skåne län",
+    "population": 98308
+  },
+  {
+    "name": "Norrköping",
+    "slug": "norrkoping",
+    "lat": 58.5843,
+    "lon": 16.1848,
+    "county": "Östergötlands län",
+    "population": 98229
+  },
+  {
+    "name": "Umeå",
+    "slug": "umea",
+    "lat": 63.8307,
+    "lon": 20.2558,
+    "county": "Västerbottens län",
+    "population": 94243
+  },
+  {
+    "name": "Gävle",
+    "slug": "gavle",
+    "lat": 60.6868,
+    "lon": 17.1297,
+    "county": "Gävleborgs län",
+    "population": 86533
+  },
+  {
+    "name": "Södertälje",
+    "slug": "sodertalje",
+    "lat": 59.1941,
+    "lon": 17.6304,
+    "county": "Stockholms län",
+    "population": 78377
+  },
+  {
+    "name": "Borås",
+    "slug": "boras",
+    "lat": 57.7283,
+    "lon": 12.945,
+    "county": "Västra Götalands län",
+    "population": 75565
+  },
+  {
+    "name": "Växjö",
+    "slug": "vaxjo",
+    "lat": 56.8873,
+    "lon": 14.7917,
+    "county": "Kronobergs län",
+    "population": 74052
+  },
+  {
+    "name": "Halmstad",
+    "slug": "halmstad",
+    "lat": 56.6672,
+    "lon": 12.851,
+    "county": "Hallands län",
+    "population": 72979
+  },
+  {
+    "name": "Sundsvall och Timrå",
+    "slug": "sundsvall-och-timra",
+    "lat": 62.4185,
+    "lon": 17.2097,
+    "county": "Västernorrlands län",
+    "population": 70918
+  },
+  {
+    "name": "Eskilstuna",
+    "slug": "eskilstuna",
+    "lat": 59.3579,
+    "lon": 16.4795,
+    "county": "Södermanlands län",
+    "population": 70646
+  },
+  {
+    "name": "Karlstad",
+    "slug": "karlstad",
+    "lat": 59.4046,
+    "lon": 13.5058,
+    "county": "Värmlands län",
+    "population": 69615
+  },
+  {
+    "name": "Östersund",
+    "slug": "ostersund",
+    "lat": 63.1453,
+    "lon": 14.717,
+    "county": "Jämtlands län",
+    "population": 53992
+  },
+  {
+    "name": "Trollhättan",
+    "slug": "trollhattan",
+    "lat": 58.2886,
+    "lon": 12.2987,
+    "county": "Västra Götalands län",
+    "population": 50069
+  },
+  {
+    "name": "Luleå",
+    "slug": "lulea",
+    "lat": 65.5879,
+    "lon": 22.1906,
+    "county": "Norrbottens län",
+    "population": 49646
+  },
+  {
+    "name": "Nordöstra Göteborg",
+    "slug": "nordostra-goteborg",
+    "lat": 57.7947,
+    "lon": 12.0452,
+    "county": "Västra Götalands län",
+    "population": 48217
+  },
+  {
+    "name": "Tumba",
+    "slug": "tumba",
+    "lat": 59.1921,
+    "lon": 17.7117,
+    "county": "Stockholms län",
+    "population": 46893
+  },
+  {
+    "name": "Lidingö",
+    "slug": "lidingo",
+    "lat": 59.3616,
+    "lon": 18.1395,
+    "county": "Stockholms län",
+    "population": 44642
+  },
+  {
+    "name": "Borlänge",
+    "slug": "borlange",
+    "lat": 60.4765,
+    "lon": 15.4471,
+    "county": "Dalarnas län",
+    "population": 44299
+  },
+  {
+    "name": "Kalmar",
+    "slug": "kalmar",
+    "lat": 56.6831,
+    "lon": 16.342,
+    "county": "Kalmar län",
+    "population": 42622
+  },
+  {
+    "name": "Kristianstad",
+    "slug": "kristianstad",
+    "lat": 56.023,
+    "lon": 14.1256,
+    "county": "Skåne län",
+    "population": 41198
+  },
+  {
+    "name": "Skövde",
+    "slug": "skovde",
+    "lat": 58.3984,
+    "lon": 13.8616,
+    "county": "Västra Götalands län",
+    "population": 40422
+  },
+  {
+    "name": "Falun",
+    "slug": "falun",
+    "lat": 60.6052,
+    "lon": 15.6031,
+    "county": "Dalarnas län",
+    "population": 39939
+  },
+  {
+    "name": "Nyköping",
+    "slug": "nykoping",
+    "lat": 58.7473,
+    "lon": 17.0261,
+    "county": "Södermanlands län",
+    "population": 39770
+  },
+  {
+    "name": "Skellefteå",
+    "slug": "skelleftea",
+    "lat": 64.7528,
+    "lon": 20.8717,
+    "county": "Västerbottens län",
+    "population": 39146
+  },
+  {
+    "name": "Varberg",
+    "slug": "varberg",
+    "lat": 57.0918,
+    "lon": 12.2614,
+    "county": "Hallands län",
+    "population": 38575
+  },
+  {
+    "name": "Åkersberga",
+    "slug": "akersberga",
+    "lat": 59.4876,
+    "lon": 18.2441,
+    "county": "Stockholms län",
+    "population": 37714
+  },
+  {
+    "name": "Karlskrona",
+    "slug": "karlskrona",
+    "lat": 56.1921,
+    "lon": 15.6279,
+    "county": "Blekinge län",
+    "population": 36423
+  },
+  {
+    "name": "Uddevalla",
+    "slug": "uddevalla",
+    "lat": 58.3544,
+    "lon": 11.909,
+    "county": "Västra Götalands län",
+    "population": 35639
+  },
+  {
+    "name": "Vallentuna",
+    "slug": "vallentuna",
+    "lat": 59.5194,
+    "lon": 18.0803,
+    "county": "Stockholms län",
+    "population": 33918
+  },
+  {
+    "name": "Landskrona",
+    "slug": "landskrona",
+    "lat": 55.8817,
+    "lon": 12.8447,
+    "county": "Skåne län",
+    "population": 33859
+  },
+  {
+    "name": "Örnsköldsvik",
+    "slug": "ornskoldsvik",
+    "lat": 63.2935,
+    "lon": 18.5541,
+    "county": "Västernorrlands län",
+    "population": 33399
+  },
+  {
+    "name": "Västerhaninge",
+    "slug": "vasterhaninge",
+    "lat": 59.1145,
+    "lon": 18.0642,
+    "county": "Stockholms län",
+    "population": 31941
+  },
+  {
+    "name": "Motala",
+    "slug": "motala",
+    "lat": 58.5458,
+    "lon": 15.0334,
+    "county": "Östergötlands län",
+    "population": 31367
+  },
+  {
+    "name": "Trelleborg",
+    "slug": "trelleborg",
+    "lat": 55.3682,
+    "lon": 13.2123,
+    "county": "Skåne län",
+    "population": 31366
+  },
+  {
+    "name": "Ängelholm",
+    "slug": "angelholm",
+    "lat": 56.2798,
+    "lon": 12.8346,
+    "county": "Skåne län",
+    "population": 31089
+  },
+  {
+    "name": "Märsta",
+    "slug": "marsta",
+    "lat": 59.6233,
+    "lon": 17.8365,
+    "county": "Stockholms län",
+    "population": 30576
+  },
+  {
+    "name": "Falkenberg",
+    "slug": "falkenberg",
+    "lat": 56.8999,
+    "lon": 12.5019,
+    "county": "Hallands län",
+    "population": 29671
+  },
+  {
+    "name": "Kungälv",
+    "slug": "kungalv",
+    "lat": 57.8786,
+    "lon": 11.9381,
+    "county": "Västra Götalands län",
+    "population": 28912
+  },
+  {
+    "name": "Lerum",
+    "slug": "lerum",
+    "lat": 57.7853,
+    "lon": 12.3037,
+    "county": "Västra Götalands län",
+    "population": 28789
+  },
+  {
+    "name": "Alingsås",
+    "slug": "alingsas",
+    "lat": 57.9297,
+    "lon": 12.5275,
+    "county": "Västra Götalands län",
+    "population": 27895
+  }
+]

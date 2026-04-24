@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://uv.nu/sitemap.xml

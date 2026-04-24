@@ -1,0 +1,2079 @@
+{
+  "version": "0.1.0",
+  "generated": "2026-03-16",
+  "country": "GLOBAL",
+  "model": "curated-abroad-seed",
+  "notes": [
+    "Curated starter set for travel-relevant places abroad.",
+    "Intended for future Sweden-first search fallback after zero Swedish matches.",
+    "Kept separate so homepage wiring can stay simple for now.",
+    "Expanded curated seed with major world cities; live geocoding still handles the long tail."
+  ],
+  "stats": {
+    "total": 102
+  },
+  "places": [
+    {
+      "id": "berlin-de",
+      "canonical_id": "berlin-de",
+      "name": "Berlin",
+      "region": "Berlin",
+      "country_name_sv": "Tyskland",
+      "country": "DE",
+      "type": "abroad_city",
+      "label": "Berlin · Berlin, Tyskland",
+      "aliases": [
+        "Berlin"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 20,
+      "search_hidden": false,
+      "route_slug": "berlin"
+    },
+    {
+      "id": "kopenhamn-dk",
+      "canonical_id": "kopenhamn-dk",
+      "name": "Köpenhamn",
+      "region": "Hovedstaden",
+      "country_name_sv": "Danmark",
+      "country": "DK",
+      "type": "abroad_city",
+      "label": "Köpenhamn · Hovedstaden, Danmark",
+      "aliases": [
+        "Kopenhamn",
+        "Copenhagen",
+        "Kobenhavn",
+        "Kopenhagen"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 20,
+      "search_hidden": false,
+      "route_slug": "copenhagen"
+    },
+    {
+      "id": "barcelona-es",
+      "canonical_id": "barcelona-es",
+      "name": "Barcelona",
+      "region": "Katalonien",
+      "country_name_sv": "Spanien",
+      "country": "ES",
+      "type": "abroad_city",
+      "label": "Barcelona · Katalonien, Spanien",
+      "aliases": [
+        "Barcelona"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 20,
+      "search_hidden": false,
+      "route_slug": "barcelona"
+    },
+    {
+      "id": "helsingfors-fi",
+      "canonical_id": "helsingfors-fi",
+      "name": "Helsingfors",
+      "region": "Nyland",
+      "country_name_sv": "Finland",
+      "country": "FI",
+      "type": "abroad_city",
+      "label": "Helsingfors · Nyland, Finland",
+      "aliases": [
+        "Helsingfors",
+        "Helsinki"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 20,
+      "search_hidden": false,
+      "route_slug": "helsingfors"
+    },
+    {
+      "id": "paris-fr",
+      "canonical_id": "paris-fr",
+      "name": "Paris",
+      "region": "Île-de-France",
+      "country_name_sv": "Frankrike",
+      "country": "FR",
+      "type": "abroad_city",
+      "label": "Paris · Île-de-France, Frankrike",
+      "aliases": [
+        "Paris"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 20,
+      "search_hidden": false,
+      "route_slug": "paris"
+    },
+    {
+      "id": "london-gb",
+      "canonical_id": "london-gb",
+      "name": "London",
+      "region": "England",
+      "country_name_sv": "Storbritannien",
+      "country": "GB",
+      "type": "abroad_city",
+      "label": "London · England, Storbritannien",
+      "aliases": [
+        "London"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 20,
+      "search_hidden": false,
+      "route_slug": "london"
+    },
+    {
+      "id": "oslo-no",
+      "canonical_id": "oslo-no",
+      "name": "Oslo",
+      "region": "Oslo",
+      "country_name_sv": "Norge",
+      "country": "NO",
+      "type": "abroad_city",
+      "label": "Oslo · Oslo, Norge",
+      "aliases": [
+        "Oslo"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 20,
+      "search_hidden": false,
+      "route_slug": "oslo"
+    },
+    {
+      "id": "new-york-us",
+      "canonical_id": "new-york-us",
+      "name": "New York",
+      "region": "New York",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "New York · New York, USA",
+      "aliases": [
+        "New York"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 20,
+      "search_hidden": false,
+      "route_slug": "new-york"
+    },
+    {
+      "id": "istanbul-tr",
+      "canonical_id": "istanbul-tr",
+      "name": "Istanbul",
+      "region": "Istanbul",
+      "country_name_sv": "Turkiet",
+      "country": "TR",
+      "type": "abroad_city",
+      "label": "Istanbul · Istanbul, Turkiet",
+      "aliases": [
+        "Istanbul"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 18,
+      "search_hidden": false,
+      "route_slug": "istanbul"
+    },
+    {
+      "id": "buenos-aires-ar",
+      "canonical_id": "buenos-aires-ar",
+      "name": "Buenos Aires",
+      "region": "Buenos Aires",
+      "country_name_sv": "Argentina",
+      "country": "AR",
+      "type": "abroad_city",
+      "label": "Buenos Aires · Buenos Aires, Argentina",
+      "aliases": [
+        "Buenos Aires"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": null,
+      "route_slug": "buenos-aires"
+    },
+    {
+      "id": "melbourne-au",
+      "canonical_id": "melbourne-au",
+      "name": "Melbourne",
+      "region": "Victoria",
+      "country_name_sv": "Australien",
+      "country": "AU",
+      "type": "abroad_city",
+      "label": "Melbourne · Victoria, Australien",
+      "aliases": [
+        "Melbourne"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": null,
+      "route_slug": "melbourne"
+    },
+    {
+      "id": "sydney-au",
+      "canonical_id": "sydney-au",
+      "name": "Sydney",
+      "region": "New South Wales",
+      "country_name_sv": "Australien",
+      "country": "AU",
+      "type": "abroad_city",
+      "label": "Sydney · New South Wales, Australien",
+      "aliases": [
+        "Sydney"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": null,
+      "route_slug": "sydney"
+    },
+    {
+      "id": "são-paulo-br",
+      "canonical_id": "são-paulo-br",
+      "name": "São Paulo",
+      "region": "São Paulo",
+      "country_name_sv": "Brasilien",
+      "country": "BR",
+      "type": "abroad_city",
+      "label": "São Paulo · São Paulo, Brasilien",
+      "aliases": [
+        "Sao Paulo",
+        "São Paulo"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": "sao-paulo",
+      "route_slug": "são-paulo"
+    },
+    {
+      "id": "toronto-ca",
+      "canonical_id": "toronto-ca",
+      "name": "Toronto",
+      "region": "Ontario",
+      "country_name_sv": "Kanada",
+      "country": "CA",
+      "type": "abroad_city",
+      "label": "Toronto · Ontario, Kanada",
+      "aliases": [
+        "Toronto"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": null,
+      "route_slug": "toronto"
+    },
+    {
+      "id": "beijing-cn",
+      "canonical_id": "beijing-cn",
+      "name": "Beijing",
+      "region": "Beijing",
+      "country_name_sv": "Kina",
+      "country": "CN",
+      "type": "abroad_city",
+      "label": "Beijing · Beijing, Kina",
+      "aliases": [
+        "Beijing",
+        "Peking"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": null,
+      "route_slug": "beijing"
+    },
+    {
+      "id": "shanghai-cn",
+      "canonical_id": "shanghai-cn",
+      "name": "Shanghai",
+      "region": "Shanghai",
+      "country_name_sv": "Kina",
+      "country": "CN",
+      "type": "abroad_city",
+      "label": "Shanghai · Shanghai, Kina",
+      "aliases": [
+        "Shanghai"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": null,
+      "route_slug": "shanghai"
+    },
+    {
+      "id": "münchen-de",
+      "canonical_id": "münchen-de",
+      "name": "München",
+      "region": "Bayern",
+      "country_name_sv": "Tyskland",
+      "country": "DE",
+      "type": "abroad_city",
+      "label": "München · Bayern, Tyskland",
+      "aliases": [
+        "München",
+        "Munich"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": false,
+      "route_slug": "munich"
+    },
+    {
+      "id": "kairo-eg",
+      "canonical_id": "kairo-eg",
+      "name": "Kairo",
+      "region": "Kairo",
+      "country_name_sv": "Egypten",
+      "country": "EG",
+      "type": "abroad_city",
+      "label": "Kairo · Kairo, Egypten",
+      "aliases": [
+        "Kairo",
+        "Cairo"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": "cairo",
+      "route_slug": "kairo"
+    },
+    {
+      "id": "seoul-kr",
+      "canonical_id": "seoul-kr",
+      "name": "Seoul",
+      "region": "Seoul",
+      "country_name_sv": "Sydkorea",
+      "country": "KR",
+      "type": "abroad_city",
+      "label": "Seoul · Seoul, Sydkorea",
+      "aliases": [
+        "Seoul"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": null,
+      "route_slug": "seoul"
+    },
+    {
+      "id": "mexico-city-mx",
+      "canonical_id": "mexico-city-mx",
+      "name": "Mexico City",
+      "region": "Ciudad de México",
+      "country_name_sv": "Mexiko",
+      "country": "MX",
+      "type": "abroad_city",
+      "label": "Mexico City · Ciudad de México, Mexiko",
+      "aliases": [
+        "Mexico City",
+        "Ciudad de Mexico"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": "mexico-city",
+      "route_slug": "mexico-city"
+    },
+    {
+      "id": "singapore-sg",
+      "canonical_id": "singapore-sg",
+      "name": "Singapore",
+      "region": "Singapore",
+      "country_name_sv": "Singapore",
+      "country": "SG",
+      "type": "abroad_city",
+      "label": "Singapore · Singapore",
+      "aliases": [
+        "Singapore"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": false,
+      "route_slug": "singapore"
+    },
+    {
+      "id": "chicago-us",
+      "canonical_id": "chicago-us",
+      "name": "Chicago",
+      "region": "Illinois",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Chicago · Illinois, USA",
+      "aliases": [
+        "Chicago"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": null,
+      "route_slug": "chicago"
+    },
+    {
+      "id": "los-angeles-us",
+      "canonical_id": "los-angeles-us",
+      "name": "Los Angeles",
+      "region": "California",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Los Angeles · California, USA",
+      "aliases": [
+        "LA"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 16,
+      "search_hidden": false,
+      "route_slug": "los-angeles"
+    },
+    {
+      "id": "dublin-ie",
+      "canonical_id": "dublin-ie",
+      "name": "Dublin",
+      "region": "Leinster",
+      "country_name_sv": "Irland",
+      "country": "IE",
+      "type": "abroad_city",
+      "label": "Dublin · Leinster, Irland",
+      "aliases": [
+        "Dublin"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 15,
+      "search_hidden": false,
+      "route_slug": "dublin"
+    },
+    {
+      "id": "rio-de-janeiro-br",
+      "canonical_id": "rio-de-janeiro-br",
+      "name": "Rio de Janeiro",
+      "region": "Rio de Janeiro",
+      "country_name_sv": "Brasilien",
+      "country": "BR",
+      "type": "abroad_city",
+      "label": "Rio de Janeiro · Rio de Janeiro, Brasilien",
+      "aliases": [
+        "Rio de Janeiro",
+        "Rio"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": "rio-de-janeiro",
+      "route_slug": "rio-de-janeiro"
+    },
+    {
+      "id": "montréal-ca",
+      "canonical_id": "montréal-ca",
+      "name": "Montréal",
+      "region": "Québec",
+      "country_name_sv": "Kanada",
+      "country": "CA",
+      "type": "abroad_city",
+      "label": "Montréal · Québec, Kanada",
+      "aliases": [
+        "Montreal",
+        "Montréal"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": "montreal",
+      "route_slug": "montréal"
+    },
+    {
+      "id": "vancouver-ca",
+      "canonical_id": "vancouver-ca",
+      "name": "Vancouver",
+      "region": "British Columbia",
+      "country_name_sv": "Kanada",
+      "country": "CA",
+      "type": "abroad_city",
+      "label": "Vancouver · British Columbia, Kanada",
+      "aliases": [
+        "Vancouver"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "vancouver"
+    },
+    {
+      "id": "zürich-ch",
+      "canonical_id": "zürich-ch",
+      "name": "Zürich",
+      "region": "Zürich",
+      "country_name_sv": "Schweiz",
+      "country": "CH",
+      "type": "abroad_city",
+      "label": "Zürich · Zürich, Schweiz",
+      "aliases": [
+        "Zürich",
+        "Zurich"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": false,
+      "route_slug": "zurich"
+    },
+    {
+      "id": "santiago-cl",
+      "canonical_id": "santiago-cl",
+      "name": "Santiago",
+      "region": "Región Metropolitana",
+      "country_name_sv": "Chile",
+      "country": "CL",
+      "type": "abroad_city",
+      "label": "Santiago · Región Metropolitana, Chile",
+      "aliases": [
+        "Santiago"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "santiago"
+    },
+    {
+      "id": "bogotá-co",
+      "canonical_id": "bogotá-co",
+      "name": "Bogotá",
+      "region": "Distrito Capital",
+      "country_name_sv": "Colombia",
+      "country": "CO",
+      "type": "abroad_city",
+      "label": "Bogotá · Distrito Capital, Colombia",
+      "aliases": [
+        "Bogota",
+        "Bogotá"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": "bogota",
+      "route_slug": "bogotá"
+    },
+    {
+      "id": "frankfurt-de",
+      "canonical_id": "frankfurt-de",
+      "name": "Frankfurt",
+      "region": "Hessen",
+      "country_name_sv": "Tyskland",
+      "country": "DE",
+      "type": "abroad_city",
+      "label": "Frankfurt · Hessen, Tyskland",
+      "aliases": [
+        "Frankfurt"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": false,
+      "route_slug": "frankfurt"
+    },
+    {
+      "id": "glasgow-gb",
+      "canonical_id": "glasgow-gb",
+      "name": "Glasgow",
+      "region": "Scotland",
+      "country_name_sv": "Storbritannien",
+      "country": "GB",
+      "type": "abroad_city",
+      "label": "Glasgow · Scotland, Storbritannien",
+      "aliases": [
+        "Glasgow"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": false,
+      "route_slug": "glasgow"
+    },
+    {
+      "id": "hongkong-hk",
+      "canonical_id": "hongkong-hk",
+      "name": "Hongkong",
+      "region": "Hongkong",
+      "country_name_sv": "Hongkong",
+      "country": "HK",
+      "type": "abroad_city",
+      "label": "Hongkong · Hongkong, Hongkong",
+      "aliases": [
+        "Hongkong",
+        "Hong Kong"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": "hong-kong",
+      "route_slug": "hongkong"
+    },
+    {
+      "id": "bali-id",
+      "canonical_id": "bali-id",
+      "name": "Bali",
+      "region": "Bali",
+      "country_name_sv": "Indonesien",
+      "country": "ID",
+      "type": "abroad_city",
+      "label": "Bali · Bali, Indonesien",
+      "aliases": [
+        "Bali",
+        "Denpasar"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": "bali",
+      "route_slug": "bali"
+    },
+    {
+      "id": "jakarta-id",
+      "canonical_id": "jakarta-id",
+      "name": "Jakarta",
+      "region": "Jakarta",
+      "country_name_sv": "Indonesien",
+      "country": "ID",
+      "type": "abroad_city",
+      "label": "Jakarta · Jakarta, Indonesien",
+      "aliases": [
+        "Jakarta"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "jakarta"
+    },
+    {
+      "id": "reykjavík-is",
+      "canonical_id": "reykjavík-is",
+      "name": "Reykjavík",
+      "region": "Höfuðborgarsvæðið",
+      "country_name_sv": "Island",
+      "country": "IS",
+      "type": "abroad_city",
+      "label": "Reykjavík · Höfuðborgarsvæðið, Island",
+      "aliases": [
+        "Reykjavik",
+        "Reykjavík"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": false,
+      "route_slug": "reykjavik"
+    },
+    {
+      "id": "osaka-jp",
+      "canonical_id": "osaka-jp",
+      "name": "Osaka",
+      "region": "Osaka",
+      "country_name_sv": "Japan",
+      "country": "JP",
+      "type": "abroad_city",
+      "label": "Osaka · Osaka, Japan",
+      "aliases": [
+        "Osaka"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "osaka"
+    },
+    {
+      "id": "auckland-nz",
+      "canonical_id": "auckland-nz",
+      "name": "Auckland",
+      "region": "Auckland",
+      "country_name_sv": "Nya Zeeland",
+      "country": "NZ",
+      "type": "abroad_city",
+      "label": "Auckland · Auckland, Nya Zeeland",
+      "aliases": [
+        "Auckland"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "auckland"
+    },
+    {
+      "id": "lima-pe",
+      "canonical_id": "lima-pe",
+      "name": "Lima",
+      "region": "Lima",
+      "country_name_sv": "Peru",
+      "country": "PE",
+      "type": "abroad_city",
+      "label": "Lima · Lima, Peru",
+      "aliases": [
+        "Lima"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "lima"
+    },
+    {
+      "id": "manila-ph",
+      "canonical_id": "manila-ph",
+      "name": "Manila",
+      "region": "Metro Manila",
+      "country_name_sv": "Filippinerna",
+      "country": "PH",
+      "type": "abroad_city",
+      "label": "Manila · Metro Manila, Filippinerna",
+      "aliases": [
+        "Manila"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "manila"
+    },
+    {
+      "id": "doha-qa",
+      "canonical_id": "doha-qa",
+      "name": "Doha",
+      "region": "Doha",
+      "country_name_sv": "Qatar",
+      "country": "QA",
+      "type": "abroad_city",
+      "label": "Doha · Doha, Qatar",
+      "aliases": [
+        "Doha"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "doha"
+    },
+    {
+      "id": "riyadh-sa",
+      "canonical_id": "riyadh-sa",
+      "name": "Riyadh",
+      "region": "Riyadh",
+      "country_name_sv": "Saudiarabien",
+      "country": "SA",
+      "type": "abroad_city",
+      "label": "Riyadh · Riyadh, Saudiarabien",
+      "aliases": [
+        "Riyadh"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "riyadh"
+    },
+    {
+      "id": "boston-us",
+      "canonical_id": "boston-us",
+      "name": "Boston",
+      "region": "Massachusetts",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Boston · Massachusetts, USA",
+      "aliases": [
+        "Boston"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "boston"
+    },
+    {
+      "id": "san-francisco-us",
+      "canonical_id": "san-francisco-us",
+      "name": "San Francisco",
+      "region": "California",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "San Francisco · California, USA",
+      "aliases": [
+        "San Francisco",
+        "SF"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": "san-francisco",
+      "route_slug": "san-francisco"
+    },
+    {
+      "id": "seattle-us",
+      "canonical_id": "seattle-us",
+      "name": "Seattle",
+      "region": "Washington",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Seattle · Washington, USA",
+      "aliases": [
+        "Seattle"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "seattle"
+    },
+    {
+      "id": "washington-us",
+      "canonical_id": "washington-us",
+      "name": "Washington",
+      "region": "District of Columbia",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Washington · District of Columbia, USA",
+      "aliases": [
+        "Washington",
+        "Washington DC"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": "washington",
+      "route_slug": "washington"
+    },
+    {
+      "id": "johannesburg-za",
+      "canonical_id": "johannesburg-za",
+      "name": "Johannesburg",
+      "region": "Gauteng",
+      "country_name_sv": "Sydafrika",
+      "country": "ZA",
+      "type": "abroad_city",
+      "label": "Johannesburg · Gauteng, Sydafrika",
+      "aliases": [
+        "Johannesburg"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": null,
+      "route_slug": "johannesburg"
+    },
+    {
+      "id": "kapstaden-za",
+      "canonical_id": "kapstaden-za",
+      "name": "Kapstaden",
+      "region": "Western Cape",
+      "country_name_sv": "Sydafrika",
+      "country": "ZA",
+      "type": "abroad_city",
+      "label": "Kapstaden · Western Cape, Sydafrika",
+      "aliases": [
+        "Cape Town",
+        "Kapstaden"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 14,
+      "search_hidden": "cape-town",
+      "route_slug": "kapstaden"
+    },
+    {
+      "id": "abu-dhabi-ae",
+      "canonical_id": "abu-dhabi-ae",
+      "name": "Abu Dhabi",
+      "region": "Abu Dhabi",
+      "country_name_sv": "Förenade Arabemiraten",
+      "country": "AE",
+      "type": "abroad_city",
+      "label": "Abu Dhabi · Abu Dhabi, Förenade Arabemiraten",
+      "aliases": [
+        "Abu Dhabi"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": "abu-dhabi",
+      "route_slug": "abu-dhabi"
+    },
+    {
+      "id": "brisbane-au",
+      "canonical_id": "brisbane-au",
+      "name": "Brisbane",
+      "region": "Queensland",
+      "country_name_sv": "Australien",
+      "country": "AU",
+      "type": "abroad_city",
+      "label": "Brisbane · Queensland, Australien",
+      "aliases": [
+        "Brisbane"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": null,
+      "route_slug": "brisbane"
+    },
+    {
+      "id": "genève-ch",
+      "canonical_id": "genève-ch",
+      "name": "Genève",
+      "region": "Genève",
+      "country_name_sv": "Schweiz",
+      "country": "CH",
+      "type": "abroad_city",
+      "label": "Genève · Genève, Schweiz",
+      "aliases": [
+        "Geneve",
+        "Geneva",
+        "Genève"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "geneva"
+    },
+    {
+      "id": "sevilla-es",
+      "canonical_id": "sevilla-es",
+      "name": "Sevilla",
+      "region": "Andalusien",
+      "country_name_sv": "Spanien",
+      "country": "ES",
+      "type": "abroad_city",
+      "label": "Sevilla · Andalusien, Spanien",
+      "aliases": [
+        "Seville",
+        "Sevilla"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "sevilla"
+    },
+    {
+      "id": "valencia-es",
+      "canonical_id": "valencia-es",
+      "name": "Valencia",
+      "region": "Valencia",
+      "country_name_sv": "Spanien",
+      "country": "ES",
+      "type": "abroad_city",
+      "label": "Valencia · Valencia, Spanien",
+      "aliases": [
+        "Valencia"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "valencia"
+    },
+    {
+      "id": "marseille-fr",
+      "canonical_id": "marseille-fr",
+      "name": "Marseille",
+      "region": "Provence-Alpes-Côte d’Azur",
+      "country_name_sv": "Frankrike",
+      "country": "FR",
+      "type": "abroad_city",
+      "label": "Marseille · Provence-Alpes-Côte d’Azur, Frankrike",
+      "aliases": [
+        "Marseille"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "marseille"
+    },
+    {
+      "id": "edinburgh-gb",
+      "canonical_id": "edinburgh-gb",
+      "name": "Edinburgh",
+      "region": "Skottland",
+      "country_name_sv": "Storbritannien",
+      "country": "GB",
+      "type": "abroad_city",
+      "label": "Edinburgh · Skottland, Storbritannien",
+      "aliases": [
+        "Edinburgh"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "edinburgh"
+    },
+    {
+      "id": "florens-it",
+      "canonical_id": "florens-it",
+      "name": "Florens",
+      "region": "Toscana",
+      "country_name_sv": "Italien",
+      "country": "IT",
+      "type": "abroad_city",
+      "label": "Florens · Toscana, Italien",
+      "aliases": [
+        "Florens",
+        "Florence",
+        "Firenze"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "florence"
+    },
+    {
+      "id": "neapel-it",
+      "canonical_id": "neapel-it",
+      "name": "Neapel",
+      "region": "Kampanien",
+      "country_name_sv": "Italien",
+      "country": "IT",
+      "type": "abroad_city",
+      "label": "Neapel · Kampanien, Italien",
+      "aliases": [
+        "Neapel",
+        "Naples",
+        "Napoli"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "naples"
+    },
+    {
+      "id": "kyoto-jp",
+      "canonical_id": "kyoto-jp",
+      "name": "Kyoto",
+      "region": "Kyoto",
+      "country_name_sv": "Japan",
+      "country": "JP",
+      "type": "abroad_city",
+      "label": "Kyoto · Kyoto, Japan",
+      "aliases": [
+        "Kyoto"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": null,
+      "route_slug": "kyoto"
+    },
+    {
+      "id": "nairobi-ke",
+      "canonical_id": "nairobi-ke",
+      "name": "Nairobi",
+      "region": "Nairobi",
+      "country_name_sv": "Kenya",
+      "country": "KE",
+      "type": "abroad_city",
+      "label": "Nairobi · Nairobi, Kenya",
+      "aliases": [
+        "Nairobi"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": null,
+      "route_slug": "nairobi"
+    },
+    {
+      "id": "marrakech-ma",
+      "canonical_id": "marrakech-ma",
+      "name": "Marrakech",
+      "region": "Marrakech-Safi",
+      "country_name_sv": "Marocko",
+      "country": "MA",
+      "type": "abroad_city",
+      "label": "Marrakech · Marrakech-Safi, Marocko",
+      "aliases": [
+        "Marrakech"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": null,
+      "route_slug": "marrakech"
+    },
+    {
+      "id": "cancún-mx",
+      "canonical_id": "cancún-mx",
+      "name": "Cancún",
+      "region": "Quintana Roo",
+      "country_name_sv": "Mexiko",
+      "country": "MX",
+      "type": "abroad_city",
+      "label": "Cancún · Quintana Roo, Mexiko",
+      "aliases": [
+        "Cancun",
+        "Cancún"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": "cancun",
+      "route_slug": "cancún"
+    },
+    {
+      "id": "wellington-nz",
+      "canonical_id": "wellington-nz",
+      "name": "Wellington",
+      "region": "Wellington",
+      "country_name_sv": "Nya Zeeland",
+      "country": "NZ",
+      "type": "abroad_city",
+      "label": "Wellington · Wellington, Nya Zeeland",
+      "aliases": [
+        "Wellington"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": null,
+      "route_slug": "wellington"
+    },
+    {
+      "id": "kraków-pl",
+      "canonical_id": "kraków-pl",
+      "name": "Kraków",
+      "region": "Lillpolen",
+      "country_name_sv": "Polen",
+      "country": "PL",
+      "type": "abroad_city",
+      "label": "Kraków · Lillpolen, Polen",
+      "aliases": [
+        "Krakow",
+        "Kraków",
+        "Cracow"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "krakow"
+    },
+    {
+      "id": "jeddah-sa",
+      "canonical_id": "jeddah-sa",
+      "name": "Jeddah",
+      "region": "Mecka-provinsen",
+      "country_name_sv": "Saudiarabien",
+      "country": "SA",
+      "type": "abroad_city",
+      "label": "Jeddah · Mecka-provinsen, Saudiarabien",
+      "aliases": [
+        "Jeddah"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": null,
+      "route_slug": "jeddah"
+    },
+    {
+      "id": "las-vegas-us",
+      "canonical_id": "las-vegas-us",
+      "name": "Las Vegas",
+      "region": "Nevada",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Las Vegas · Nevada, USA",
+      "aliases": [
+        "Las Vegas"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": "las-vegas",
+      "route_slug": "las-vegas"
+    },
+    {
+      "id": "miami-us",
+      "canonical_id": "miami-us",
+      "name": "Miami",
+      "region": "Florida",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Miami · Florida, USA",
+      "aliases": [
+        "Miami"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": false,
+      "route_slug": "miami"
+    },
+    {
+      "id": "orlando-us",
+      "canonical_id": "orlando-us",
+      "name": "Orlando",
+      "region": "Florida",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Orlando · Florida, USA",
+      "aliases": [
+        "Orlando"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 12,
+      "search_hidden": null,
+      "route_slug": "orlando"
+    },
+    {
+      "id": "dubai-ae",
+      "canonical_id": "dubai-ae",
+      "name": "Dubai",
+      "region": "Dubai",
+      "country_name_sv": "Förenade arabemiraten",
+      "country": "AE",
+      "type": "abroad_city",
+      "label": "Dubai · Dubai, Förenade arabemiraten",
+      "aliases": [
+        "Dubai"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "wien-at",
+      "canonical_id": "wien-at",
+      "name": "Wien",
+      "region": "Wien",
+      "country_name_sv": "Österrike",
+      "country": "AT",
+      "type": "abroad_city",
+      "label": "Wien · Wien, Österrike",
+      "aliases": [
+        "Wien",
+        "Vienna"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "bryssel-be",
+      "canonical_id": "bryssel-be",
+      "name": "Bryssel",
+      "region": "Brysselregionen",
+      "country_name_sv": "Belgien",
+      "country": "BE",
+      "type": "abroad_city",
+      "label": "Bryssel · Brysselregionen, Belgien",
+      "aliases": [
+        "Bryssel",
+        "Brussels",
+        "Bruxelles",
+        "Brussel"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "gen-ve-ch",
+      "canonical_id": "gen-ve-ch",
+      "name": "Genève",
+      "region": "Genève",
+      "country_name_sv": "Schweiz",
+      "country": "CH",
+      "type": "abroad_city",
+      "label": "Genève · Genève, Schweiz",
+      "aliases": [
+        "Genève",
+        "Geneva",
+        "Geneve"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "z-rich-ch",
+      "canonical_id": "z-rich-ch",
+      "name": "Zürich",
+      "region": "Zürich",
+      "country_name_sv": "Schweiz",
+      "country": "CH",
+      "type": "abroad_city",
+      "label": "Zürich · Zürich, Schweiz",
+      "aliases": [
+        "Zürich",
+        "Zurich"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "prag-cz",
+      "canonical_id": "prag-cz",
+      "name": "Prag",
+      "region": "Prag",
+      "country_name_sv": "Tjeckien",
+      "country": "CZ",
+      "type": "abroad_city",
+      "label": "Prag · Prag, Tjeckien",
+      "aliases": [
+        "Prag",
+        "Prague",
+        "Praha"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "hamburg-de",
+      "canonical_id": "hamburg-de",
+      "name": "Hamburg",
+      "region": "Hamburg",
+      "country_name_sv": "Tyskland",
+      "country": "DE",
+      "type": "abroad_city",
+      "label": "Hamburg · Hamburg, Tyskland",
+      "aliases": [
+        "Hamburg"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "alicante-es",
+      "canonical_id": "alicante-es",
+      "name": "Alicante",
+      "region": "Valencia",
+      "country_name_sv": "Spanien",
+      "country": "ES",
+      "type": "abroad_city",
+      "label": "Alicante · Valencia, Spanien",
+      "aliases": [
+        "Alicante"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "madrid-es",
+      "canonical_id": "madrid-es",
+      "name": "Madrid",
+      "region": "Madrid",
+      "country_name_sv": "Spanien",
+      "country": "ES",
+      "type": "abroad_city",
+      "label": "Madrid · Madrid, Spanien",
+      "aliases": [
+        "Madrid"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "m-laga-es",
+      "canonical_id": "m-laga-es",
+      "name": "Málaga",
+      "region": "Andalusien",
+      "country_name_sv": "Spanien",
+      "country": "ES",
+      "type": "abroad_city",
+      "label": "Málaga · Andalusien, Spanien",
+      "aliases": [
+        "Málaga",
+        "Malaga"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "palma-es",
+      "canonical_id": "palma-es",
+      "name": "Palma",
+      "region": "Balearerna",
+      "country_name_sv": "Spanien",
+      "country": "ES",
+      "type": "abroad_city",
+      "label": "Palma · Balearerna, Spanien",
+      "aliases": [
+        "Palma"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "nice-fr",
+      "canonical_id": "nice-fr",
+      "name": "Nice",
+      "region": "Provence-Alpes-Côte d’Azur",
+      "country_name_sv": "Frankrike",
+      "country": "FR",
+      "type": "abroad_city",
+      "label": "Nice · Provence-Alpes-Côte d’Azur, Frankrike",
+      "aliases": [
+        "Nice"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "manchester-gb",
+      "canonical_id": "manchester-gb",
+      "name": "Manchester",
+      "region": "England",
+      "country_name_sv": "Storbritannien",
+      "country": "GB",
+      "type": "abroad_city",
+      "label": "Manchester · England, Storbritannien",
+      "aliases": [
+        "Manchester"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "aten-gr",
+      "canonical_id": "aten-gr",
+      "name": "Aten",
+      "region": "Attika",
+      "country_name_sv": "Grekland",
+      "country": "GR",
+      "type": "abroad_city",
+      "label": "Aten · Attika, Grekland",
+      "aliases": [
+        "Aten",
+        "Athens",
+        "Athina"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "chania-gr",
+      "canonical_id": "chania-gr",
+      "name": "Chania",
+      "region": "Kreta",
+      "country_name_sv": "Grekland",
+      "country": "GR",
+      "type": "abroad_city",
+      "label": "Chania · Kreta, Grekland",
+      "aliases": [
+        "Chania",
+        "Hania"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "rhodos-gr",
+      "canonical_id": "rhodos-gr",
+      "name": "Rhodos",
+      "region": "Södra Egeiska öarna",
+      "country_name_sv": "Grekland",
+      "country": "GR",
+      "type": "abroad_city",
+      "label": "Rhodos · Södra Egeiska öarna, Grekland",
+      "aliases": [
+        "Rhodos"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "dubrovnik-hr",
+      "canonical_id": "dubrovnik-hr",
+      "name": "Dubrovnik",
+      "region": "Dubrovnik-Neretva",
+      "country_name_sv": "Kroatien",
+      "country": "HR",
+      "type": "abroad_city",
+      "label": "Dubrovnik · Dubrovnik-Neretva, Kroatien",
+      "aliases": [
+        "Dubrovnik"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "split-hr",
+      "canonical_id": "split-hr",
+      "name": "Split",
+      "region": "Split-Dalmatien",
+      "country_name_sv": "Kroatien",
+      "country": "HR",
+      "type": "abroad_city",
+      "label": "Split · Split-Dalmatien, Kroatien",
+      "aliases": [
+        "Split"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "budapest-hu",
+      "canonical_id": "budapest-hu",
+      "name": "Budapest",
+      "region": "Budapest",
+      "country_name_sv": "Ungern",
+      "country": "HU",
+      "type": "abroad_city",
+      "label": "Budapest · Budapest, Ungern",
+      "aliases": [
+        "Budapest"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "bologna-it",
+      "canonical_id": "bologna-it",
+      "name": "Bologna",
+      "region": "Emilia-Romagna",
+      "country_name_sv": "Italien",
+      "country": "IT",
+      "type": "abroad_city",
+      "label": "Bologna · Emilia-Romagna, Italien",
+      "aliases": [
+        "Bologna"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": false,
+      "route_slug": "bologna"
+    },
+    {
+      "id": "milano-it",
+      "canonical_id": "milano-it",
+      "name": "Milano",
+      "region": "Lombardiet",
+      "country_name_sv": "Italien",
+      "country": "IT",
+      "type": "abroad_city",
+      "label": "Milano · Lombardiet, Italien",
+      "aliases": [
+        "Milano",
+        "Milan"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "palermo-it",
+      "canonical_id": "palermo-it",
+      "name": "Palermo",
+      "region": "Sicilien",
+      "country_name_sv": "Italien",
+      "country": "IT",
+      "type": "abroad_city",
+      "label": "Palermo · Sicilien, Italien",
+      "aliases": [
+        "Palermo"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": false,
+      "route_slug": "palermo"
+    },
+    {
+      "id": "rom-it",
+      "canonical_id": "rom-it",
+      "name": "Rom",
+      "region": "Lazio",
+      "country_name_sv": "Italien",
+      "country": "IT",
+      "type": "abroad_city",
+      "label": "Rom · Lazio, Italien",
+      "aliases": [
+        "Rom",
+        "Rome",
+        "Roma"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 18,
+      "search_hidden": false,
+      "route_slug": "rome"
+    },
+    {
+      "id": "venedig-it",
+      "canonical_id": "venedig-it",
+      "name": "Venedig",
+      "region": "Veneto",
+      "country_name_sv": "Italien",
+      "country": "IT",
+      "type": "abroad_city",
+      "label": "Venedig · Veneto, Italien",
+      "aliases": [
+        "Venedig",
+        "Venice",
+        "Venezia"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "tokyo-jp",
+      "canonical_id": "tokyo-jp",
+      "name": "Tokyo",
+      "region": "Tokyo",
+      "country_name_sv": "Japan",
+      "country": "JP",
+      "type": "abroad_city",
+      "label": "Tokyo · Tokyo, Japan",
+      "aliases": [
+        "Tokyo"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "amsterdam-nl",
+      "canonical_id": "amsterdam-nl",
+      "name": "Amsterdam",
+      "region": "Noord-Holland",
+      "country_name_sv": "Nederländerna",
+      "country": "NL",
+      "type": "abroad_city",
+      "label": "Amsterdam · Noord-Holland, Nederländerna",
+      "aliases": [
+        "Amsterdam"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "krak-w-pl",
+      "canonical_id": "krak-w-pl",
+      "name": "Kraków",
+      "region": "Lillpolen",
+      "country_name_sv": "Polen",
+      "country": "PL",
+      "type": "abroad_city",
+      "label": "Kraków · Lillpolen, Polen",
+      "aliases": [
+        "Kraków",
+        "Krakow"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "warszawa-pl",
+      "canonical_id": "warszawa-pl",
+      "name": "Warszawa",
+      "region": "Mazovien",
+      "country_name_sv": "Polen",
+      "country": "PL",
+      "type": "abroad_city",
+      "label": "Warszawa · Mazovien, Polen",
+      "aliases": [
+        "Warszawa",
+        "Warsaw"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "lissabon-pt",
+      "canonical_id": "lissabon-pt",
+      "name": "Lissabon",
+      "region": "Lissabon",
+      "country_name_sv": "Portugal",
+      "country": "PT",
+      "type": "abroad_city",
+      "label": "Lissabon · Lissabon, Portugal",
+      "aliases": [
+        "Lissabon",
+        "Lisbon",
+        "Lisboa"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "porto-pt",
+      "canonical_id": "porto-pt",
+      "name": "Porto",
+      "region": "Porto",
+      "country_name_sv": "Portugal",
+      "country": "PT",
+      "type": "abroad_city",
+      "label": "Porto · Porto, Portugal",
+      "aliases": [
+        "Porto"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "bangkok-th",
+      "canonical_id": "bangkok-th",
+      "name": "Bangkok",
+      "region": "Bangkok",
+      "country_name_sv": "Thailand",
+      "country": "TH",
+      "type": "abroad_city",
+      "label": "Bangkok · Bangkok, Thailand",
+      "aliases": [
+        "Bangkok"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "phuket-th",
+      "canonical_id": "phuket-th",
+      "name": "Phuket",
+      "region": "Phuket",
+      "country_name_sv": "Thailand",
+      "country": "TH",
+      "type": "abroad_city",
+      "label": "Phuket · Phuket, Thailand",
+      "aliases": [
+        "Phuket"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "antalya-tr",
+      "canonical_id": "antalya-tr",
+      "name": "Antalya",
+      "region": "Antalya",
+      "country_name_sv": "Turkiet",
+      "country": "TR",
+      "type": "abroad_city",
+      "label": "Antalya · Antalya, Turkiet",
+      "aliases": [
+        "Antalya"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "newark-us",
+      "canonical_id": "newark-us",
+      "name": "Newark",
+      "region": "New Jersey",
+      "country_name_sv": "USA",
+      "country": "US",
+      "type": "abroad_city",
+      "label": "Newark · New Jersey, USA",
+      "aliases": [
+        "Newark"
+      ],
+      "tags": [
+        "abroad",
+        "seed"
+      ],
+      "search_priority": 10,
+      "search_hidden": true
+    },
+    {
+      "id": "rome-it",
+      "canonical_id": "rome-it-en",
+      "name": "Rome",
+      "region": "Lazio",
+      "country_name_sv": "Italien",
+      "country": "IT",
+      "type": "abroad_city",
+      "label": "Rome · Lazio, Italien",
+      "aliases": [
+        "Rome",
+        "Roma",
+        "Rom"
+      ],
+      "tags": [
+        "abroad",
+        "seed",
+        "alias"
+      ],
+      "search_priority": 9,
+      "search_hidden": true
+    }
+  ]
+}

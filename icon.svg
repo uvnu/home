@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="120" fill="#F5A623"/>
+  <!-- Rays -->
+  <g stroke="white" stroke-width="28" stroke-linecap="round" opacity="0.6">
+    <line x1="256" y1="80"  x2="256" y2="120"/>
+    <line x1="256" y1="392" x2="256" y2="432"/>
+    <line x1="80"  y1="256" x2="120" y2="256"/>
+    <line x1="392" y1="256" x2="432" y2="256"/>
+    <line x1="139" y1="139" x2="168" y2="168"/>
+    <line x1="344" y1="344" x2="373" y2="373"/>
+    <line x1="373" y1="139" x2="344" y2="168"/>
+    <line x1="168" y1="344" x2="139" y2="373"/>
+  </g>
+  <!-- Sun disc -->
+  <circle cx="256" cy="256" r="96" fill="white"/>
+</svg>

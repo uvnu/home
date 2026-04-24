@@ -1,0 +1,40 @@
+{
+  "version": "0.1.0",
+  "generated": "2026-03-16",
+  "country": "SE",
+  "model": "local-area-backlog",
+  "notes": [
+    "Examples of smaller areas that should be added once Kly has live pages or place-resolution for those parent routes."
+  ],
+  "stats": {
+    "total": 1
+  },
+  "places": [
+    {
+      "id": "tarby-eskilstuna",
+      "name": "Tärby",
+      "parent_name": "Eskilstuna",
+      "parent_place_id": "eskilstuna-eskilstuna",
+      "municipality": "Eskilstuna kommun",
+      "county": "Södermanlands län",
+      "country": "SE",
+      "type": "district",
+      "route_slug": "eskilstuna",
+      "aliases": [
+        "Tarby",
+        "Tärby, Eskilstuna",
+        "Tarby, Eskilstuna"
+      ],
+      "tags": [
+        "local_area",
+        "village"
+      ],
+      "canonical_id": "tarby-eskilstuna",
+      "label": "Tärby · Eskilstuna, Södermanlands län",
+      "search_priority": 40,
+      "resolution": "parent_route",
+      "needs_coordinates": true,
+      "search_hidden": false
+    }
+  ]
+}
